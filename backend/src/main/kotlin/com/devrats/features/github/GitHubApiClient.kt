@@ -20,7 +20,7 @@ class GitHubApiClient(private val clientId: String, private val clientSecret: St
      * Exchange the OAuth code for a GitHub access token.
      * Uses form-urlencoded POST (GitHub's preferred format).
      */
-    suspend fun exchangeCodeForToken(code: String): String? {
+    suspend fun exchangeCodeForToken(code: String, redirectUri: String? = null): String? {
         logger.info("Exchanging OAuth code for token (clientId=$clientId, code=${code.take(6)}...)")
 
         val response = client.submitForm(
@@ -29,6 +29,9 @@ class GitHubApiClient(private val clientId: String, private val clientSecret: St
                 append("client_id", clientId)
                 append("client_secret", clientSecret)
                 append("code", code)
+                if (redirectUri != null) {
+                    append("redirect_uri", redirectUri)
+                }
             }
         ) {
             accept(ContentType.Application.Json)

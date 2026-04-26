@@ -69,7 +69,7 @@ export default function SquadScreen() {
             onChangeText={setInviteCode}
             autoCapitalize="none"
           />
-          <Button title="Join" onPress={handleJoin} loading={isJoining} variant="outline" size="md" />
+          <Button title="Join" onPress={handleJoin} loading={isJoining} variant="secondary" size="md" />
         </View>
       </View>
 

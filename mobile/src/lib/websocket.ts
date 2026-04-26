@@ -8,7 +8,7 @@ interface WebSocketOptions {
 
 export function useWebSocket(path: string, options: WebSocketOptions = {}) {
   const ws = useRef<WebSocket | null>(null);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout>>();
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const connect = useCallback(() => {
     if (!path) return;
@@ -21,6 +21,6 @@ export function useWebSocket(path: string, options: WebSocketOptions = {}) {
 
   useEffect(() => {
     connect();
-    return () => { clearTimeout(reconnectTimer.current); ws.current?.close(); };
+    return () => { if (reconnectTimer.current) clearTimeout(reconnectTimer.current); ws.current?.close(); };
   }, [connect]);
 }

@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
+import { useLocalSearchParams, useRouter, useRootNavigationState } from 'expo-router';
+import { storage } from '../../src/lib/storage';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { theme } from '../../src/theme';
 
@@ -9,32 +9,43 @@ export default function AuthCallbackScreen() {
   const params = useLocalSearchParams<{ accessToken?: string; refreshToken?: string; error?: string }>();
   const { fetchProfile } = useAuthStore();
   const router = useRouter();
+  const navigationState = useRootNavigationState();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || !navigationState?.key) return;
+
     const handleCallback = async () => {
       if (params.error) {
         console.error('Auth error:', params.error);
-        router.replace('/(auth)/login');
+        setTimeout(() => {
+          router.replace('/(auth)/login');
+        }, 100);
         return;
       }
 
       if (params.accessToken && params.refreshToken) {
         // Save tokens
-        await SecureStore.setItemAsync('accessToken', params.accessToken);
-        await SecureStore.setItemAsync('refreshToken', params.refreshToken);
+        await storage.setItemAsync('accessToken', params.accessToken);
+        await storage.setItemAsync('refreshToken', params.refreshToken);
 
         // Fetch user profile and update auth state
         await fetchProfile();
-
-        // Navigate to home
-        router.replace('/(tabs)/home');
+        // We do not need to call router.replace('/(tabs)/home') here
+        // because _layout.tsx will automatically redirect when isAuthenticated becomes true.
       } else {
-        router.replace('/(auth)/login');
+        setTimeout(() => {
+          router.replace('/(auth)/login');
+        }, 100);
       }
     };
 
     handleCallback();
-  }, [params]);
+  }, [params, navigationState?.key, isMounted]);
 
   return (
     <View style={s.container}>

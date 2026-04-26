@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Platform, Linking } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { useLocalSearchParams } from 'expo-router';
+import * as Linking from 'expo-linking';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { theme } from '../../src/theme';
@@ -12,16 +13,25 @@ const BACKEND_URL = 'http://localhost:8080';
 export default function LoginScreen() {
   const { isLoading, error } = useAuthStore();
   const params = useLocalSearchParams<{ error?: string }>();
+  const router = useRouter();
 
   const handleLogin = async () => {
-    const loginUrl = `${BACKEND_URL}/api/auth/github/login`;
+    const redirectUrl = Linking.createURL('/auth/callback');
+    const loginUrl = `${BACKEND_URL}/api/auth/github/login?redirectUrl=${encodeURIComponent(redirectUrl)}`;
 
     if (Platform.OS === 'web') {
       // On web, redirect the entire page
       window.location.href = loginUrl;
     } else {
-      // On native, open in-app browser
-      await WebBrowser.openBrowserAsync(loginUrl);
+      // On native, use auth session
+      const result = await WebBrowser.openAuthSessionAsync(loginUrl, redirectUrl);
+      if (result.type === 'success' && result.url) {
+        // Parse the URL manually in case Expo Router misses the deep link after browser closes
+        const parsedUrl = Linking.parse(result.url);
+        if (parsedUrl.path === 'auth/callback' || parsedUrl.path === '/auth/callback') {
+          router.replace({ pathname: '/auth/callback', params: (parsedUrl.queryParams as Record<string, string>) || {} });
+        }
+      }
     }
   };
 
