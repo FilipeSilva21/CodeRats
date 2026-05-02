@@ -23,13 +23,12 @@ fun Application.authRoutes() {
 
             // Step 1: Redirect user to GitHub for authorization
             get("/github/login") {
-                val appRedirect = call.request.queryParameters["redirectUrl"] ?: "$frontendUrl/auth/callback"
+                val appRedirect = call.request.queryParameters["redirectUrl"] ?: "$frontendUrl/callback"
                 val state = URLEncoder.encode(appRedirect, "UTF-8")
                 val githubAuthUrl = "https://github.com/login/oauth/authorize" +
                     "?client_id=$clientId" +
                     "&scope=read:user" +
-                    "&state=$state" +
-                    "&redirect_uri=" + URLEncoder.encode("http://localhost:8080/api/auth/github/callback", "UTF-8")
+                    "&state=$state"
                 call.respondRedirect(githubAuthUrl)
             }
 
@@ -37,7 +36,7 @@ fun Application.authRoutes() {
             get("/github/callback") {
                 val code = call.parameters["code"]
                 val state = call.parameters["state"]
-                val baseRedirectUrl = state ?: "$frontendUrl/auth/callback"
+                val baseRedirectUrl = state ?: "$frontendUrl/callback"
                 
                 if (code.isNullOrBlank()) {
                     call.respondRedirect("$baseRedirectUrl?error=missing_code")
@@ -45,7 +44,7 @@ fun Application.authRoutes() {
                 }
 
                 // Exchange code for GitHub access token
-                val githubToken = githubClient.exchangeCodeForToken(code, "http://localhost:8080/api/auth/github/callback")
+                val githubToken = githubClient.exchangeCodeForToken(code, null)
                 if (githubToken == null) {
                     call.respondRedirect("$baseRedirectUrl?error=token_exchange_failed")
                     return@get

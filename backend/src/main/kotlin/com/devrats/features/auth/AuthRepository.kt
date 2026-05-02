@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
 class AuthRepository {
-    init { transaction { SchemaUtils.create(Users, RefreshTokens) } }
+    init { transaction { SchemaUtils.createMissingTablesAndColumns(Users, RefreshTokens) } }
 
     fun findByGithubId(githubId: String) = transaction {
         Users.selectAll().where { Users.githubId eq githubId }.firstOrNull()

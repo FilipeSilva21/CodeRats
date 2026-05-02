@@ -24,7 +24,21 @@ class ScoringService(private val repo: ScoringRepository, private val connection
         val filesChanged = commit.added.size + commit.modified.size + commit.removed.size
         if (filesChanged == 0) { logger.debug("Skipping commit with no file changes"); return }
 
-        val todayTotal = repo.getTodayScores(githubUserId)
+        // Find internal user id from githubId
+        val internalUser = transaction { 
+            com.devrats.features.auth.models.Users.selectAll()
+                .where { com.devrats.features.auth.models.Users.githubId eq githubUserId }
+                .singleOrNull()
+        }
+        
+        if (internalUser == null) {
+            logger.debug("Skipping commit for unknown github user: $githubUserId")
+            return
+        }
+        
+        val userId = internalUser[com.devrats.features.auth.models.Users.id]
+
+        val todayTotal = repo.getTodayScores(userId)
         if (todayTotal >= dailyCap) { logger.info("Daily cap reached for $githubUserId"); return }
 
         var points = 10
@@ -34,25 +48,17 @@ class ScoringService(private val repo: ScoringRepository, private val connection
         val remaining = dailyCap - todayTotal
         points = minOf(points, remaining)
 
-        repo.addScore(githubUserId, points, "push", commit.id)
-        logger.info("Scored $points pts for commit ${commit.id.take(7)} by $githubUserId")
+        repo.addScore(userId, points, "push", commit.id)
+        logger.info("Scored $points pts for commit ${commit.id.take(7)} by $githubUserId (internal $userId)")
         
-        // Find user to get their new total score
-        val userId = transaction { 
-            com.devrats.features.auth.models.Users.selectAll()
-                .where { com.devrats.features.auth.models.Users.id eq githubUserId }
-                .singleOrNull()?.get(com.devrats.features.auth.models.Users.id)
-        }
         val totalScore = transaction {
              com.devrats.features.auth.models.Users.selectAll()
-                .where { com.devrats.features.auth.models.Users.id eq githubUserId }
+                .where { com.devrats.features.auth.models.Users.id eq userId }
                 .singleOrNull()?.get(com.devrats.features.auth.models.Users.totalScore) ?: 0
         }
 
-        if (userId != null) {
-            GlobalScope.launch {
-                connectionManager.broadcastScoreUpdate(userId, totalScore, points)
-            }
+        GlobalScope.launch {
+            connectionManager.broadcastScoreUpdate(userId, totalScore, points)
         }
     }
 }

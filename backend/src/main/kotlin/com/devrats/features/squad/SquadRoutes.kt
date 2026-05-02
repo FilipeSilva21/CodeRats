@@ -1,5 +1,6 @@
 package com.devrats.features.squad
 
+import com.devrats.features.squad.models.UpdateSquadRequest
 import com.devrats.shared.extensions.userId
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -26,6 +27,16 @@ fun Application.squadRoutes() {
                 post("/join") {
                     val body = call.receive<Map<String, String>>()
                     call.respond(service.joinByCode(body["inviteCode"]!!, call.userId()))
+                }
+                patch("/{id}") {
+                    val id = call.parameters["id"] ?: return@patch call.respond(HttpStatusCode.BadRequest)
+                    val body = call.receive<UpdateSquadRequest>()
+                    call.respond(service.updateSquad(id, call.userId(), body.name, body.description, body.imageUrl))
+                }
+                delete("/{id}/leave") {
+                    val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+                    service.leaveSquad(id, call.userId())
+                    call.respond(HttpStatusCode.NoContent)
                 }
             }
         }

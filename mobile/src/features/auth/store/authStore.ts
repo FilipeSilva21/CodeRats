@@ -14,5 +14,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   logout: async () => { try { await api.delete('/auth/logout'); } catch {} await storage.deleteItemAsync('accessToken'); await storage.deleteItemAsync('refreshToken'); set({ user: null, isAuthenticated: false, isLoading: false }); },
   loadSession: async () => { try { const token = await storage.getItemAsync('accessToken'); if (!token) { set({ isLoading: false }); return; } await get().fetchProfile(); } catch { set({ isLoading: false }); } },
-  fetchProfile: async () => { try { const { data } = await api.get('/auth/me'); set({ user: data, isAuthenticated: true, isLoading: false }); } catch { set({ user: null, isAuthenticated: false, isLoading: false }); } },
+  fetchProfile: async () => { 
+    try { 
+      const { data } = await api.get('/auth/me'); 
+      set({ user: data, isAuthenticated: true, isLoading: false }); 
+    } catch (e: any) { 
+      console.error('Fetch profile failed:', e.response?.data || e.message);
+      set({ user: null, isAuthenticated: false, isLoading: false }); 
+    } 
+  },
 }));

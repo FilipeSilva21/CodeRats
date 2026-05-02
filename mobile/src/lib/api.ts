@@ -1,7 +1,13 @@
 import axios from 'axios';
 import { storage } from './storage';
+import { BACKEND_URL } from '../config';
 
-const api = axios.create({ baseURL: 'http://localhost:8080/api' });
+const api = axios.create({ 
+  baseURL: `${BACKEND_URL}/api`,
+  headers: {
+    'ngrok-skip-browser-warning': 'true'
+  }
+});
 
 api.interceptors.request.use(async (config) => {
   const token = await storage.getItemAsync('accessToken');
@@ -16,7 +22,10 @@ api.interceptors.response.use(
       const refresh = await storage.getItemAsync('refreshToken');
       if (refresh) {
         try {
-          const { data } = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken: refresh });
+          const { data } = await axios.post(`${BACKEND_URL}/api/auth/refresh`, 
+            { refreshToken: refresh },
+            { headers: { 'ngrok-skip-browser-warning': 'true' } }
+          );
           await storage.setItemAsync('accessToken', data.accessToken);
           error.config.headers.Authorization = `Bearer ${data.accessToken}`;
           return axios(error.config);

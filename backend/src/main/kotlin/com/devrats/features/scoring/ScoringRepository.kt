@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
 class ScoringRepository {
-    init { transaction { SchemaUtils.create(Scores) } }
+    init { transaction { SchemaUtils.createMissingTablesAndColumns(Scores) } }
 
     fun addScore(userId: String, points: Int, source: String, commitHash: String?) = transaction {
         Scores.insert {

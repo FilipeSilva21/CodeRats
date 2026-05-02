@@ -7,6 +7,7 @@ object Squads : Table("squads") {
     val id = varchar("id", 36)
     val name = varchar("name", 100)
     val description = varchar("description", 500).nullable()
+    val imageUrl = varchar("image_url", 500).nullable()
     val inviteCode = varchar("invite_code", 6).uniqueIndex()
     val ownerId = varchar("owner_id", 36)
     val maxMembers = integer("max_members").default(10)

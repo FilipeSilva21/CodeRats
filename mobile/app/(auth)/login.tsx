@@ -7,8 +7,7 @@ import { Button } from '../../src/components/ui/Button';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { theme } from '../../src/theme';
 import { Ionicons } from '@expo/vector-icons';
-
-const BACKEND_URL = 'http://localhost:8080';
+import { BACKEND_URL } from '../../src/config';
 
 export default function LoginScreen() {
   const { isLoading, error } = useAuthStore();
@@ -16,7 +15,8 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    const redirectUrl = Linking.createURL('/auth/callback');
+    const redirectUrl = Linking.createURL('/callback');
+    console.log('LoginScreen: redirectUrl generated:', redirectUrl);
     const loginUrl = `${BACKEND_URL}/api/auth/github/login?redirectUrl=${encodeURIComponent(redirectUrl)}`;
 
     if (Platform.OS === 'web') {
@@ -28,8 +28,8 @@ export default function LoginScreen() {
       if (result.type === 'success' && result.url) {
         // Parse the URL manually in case Expo Router misses the deep link after browser closes
         const parsedUrl = Linking.parse(result.url);
-        if (parsedUrl.path === 'auth/callback' || parsedUrl.path === '/auth/callback') {
-          router.replace({ pathname: '/auth/callback', params: (parsedUrl.queryParams as Record<string, string>) || {} });
+        if (parsedUrl.path === 'callback' || parsedUrl.path === '/callback' || parsedUrl.path === 'auth/callback' || parsedUrl.path === '/auth/callback') {
+          router.replace({ pathname: '/(auth)/callback', params: (parsedUrl.queryParams as Record<string, string>) || {} });
         }
       }
     }

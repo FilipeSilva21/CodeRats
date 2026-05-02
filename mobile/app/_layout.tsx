@@ -19,14 +19,18 @@ export default function RootLayout() {
   useEffect(() => { loadSession(); }, []);
 
   useEffect(() => {
+    console.log('RootLayout state:', JSON.stringify({ isAuthenticated, isLoading, segments }));
     if (!navigationState?.key || isLoading) return;
     
     // Use a small timeout to let the router finish its initial state updates
     const timer = setTimeout(() => {
       const inAuthGroup = segments[0] === '(auth)' || segments[0] === 'auth';
+      console.log('Checking redirect:', JSON.stringify({ inAuthGroup, isAuthenticated, segment0: segments[0] }));
       if (!isAuthenticated && !inAuthGroup) {
+        console.log('Redirecting to login');
         router.replace('/(auth)/login');
       } else if (isAuthenticated && inAuthGroup) {
+        console.log('Redirecting to home');
         router.replace('/(tabs)/home');
       }
     }, 50);
