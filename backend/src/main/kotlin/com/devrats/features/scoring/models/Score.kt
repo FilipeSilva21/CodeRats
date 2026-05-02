@@ -12,5 +12,3 @@ object Scores : Table("scores") {
     val scoredAt = timestamp("scored_at").defaultExpression(org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp)
     override val primaryKey = PrimaryKey(id)
 }
-
-//teste apenas
