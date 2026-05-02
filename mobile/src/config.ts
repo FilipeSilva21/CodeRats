@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 // 1. UPDATE THIS IF YOU ARE USING NGROK!
 // Example: const NGROK_URL = 'https://abcd-123.ngrok.app';
 // ==========================================
-const NGROK_URL: string = 'https://imprecise-antennae-sympathy.ngrok-free.dev';
+const NGROK_URL: string = '';
 
 const getHostUri = () => {
   if (Constants.expoConfig?.hostUri) {
