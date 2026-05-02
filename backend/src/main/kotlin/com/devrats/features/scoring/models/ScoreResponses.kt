@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 data class RecentScoreResponse(
     val id: String,
     val points: Int,
-    val source: String
+    val source: String,
+    val commitHash: String? = null,
+    val scoredAt: String? = null
 )
 
 @Serializable

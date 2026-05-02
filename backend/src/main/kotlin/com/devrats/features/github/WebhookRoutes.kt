@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import org.koin.ktor.ext.inject
+import java.net.URLDecoder
 
 fun Application.webhookRoutes() {
     val webhookService by inject<WebhookService>()
@@ -24,10 +25,19 @@ fun Application.webhookRoutes() {
                 val event = call.request.header("X-GitHub-Event") ?: ""
                 when (event) {
                     "push" -> {
-                        val payload = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-                            .decodeFromString<WebhookPayload>(body)
-                        webhookService.processPushEvent(payload)
-                        call.respond(HttpStatusCode.OK, mapOf("status" to "processed"))
+                        try {
+                            var jsonString = body
+                            if (body.startsWith("payload=")) {
+                                val encoded = body.removePrefix("payload=")
+                                jsonString = URLDecoder.decode(encoded, "UTF-8")
+                            }
+                            val payload = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+                                .decodeFromString<WebhookPayload>(jsonString)
+                            webhookService.processPushEvent(payload)
+                            call.respond(HttpStatusCode.OK, mapOf("status" to "processed"))
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid payload format"))
+                        }
                     }
                     "ping" -> call.respond(HttpStatusCode.OK, mapOf("status" to "pong"))
                     else -> call.respond(HttpStatusCode.OK, mapOf("status" to "ignored"))

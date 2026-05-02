@@ -27,7 +27,9 @@ fun Application.scoringRoutes() {
                         RecentScoreResponse(
                             id = it[com.devrats.features.scoring.models.Scores.id],
                             points = it[com.devrats.features.scoring.models.Scores.points],
-                            source = it[com.devrats.features.scoring.models.Scores.scoreSource]
+                            source = it[com.devrats.features.scoring.models.Scores.scoreSource],
+                            commitHash = it[com.devrats.features.scoring.models.Scores.commitHash],
+                            scoredAt = it[com.devrats.features.scoring.models.Scores.scoredAt].toString()
                         )
                     }
                     val todayScore = repo.getTodayScores(uid)
