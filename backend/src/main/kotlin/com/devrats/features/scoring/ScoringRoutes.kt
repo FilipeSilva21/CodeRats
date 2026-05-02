@@ -1,5 +1,6 @@
 package com.devrats.features.scoring
 
+import com.devrats.features.auth.models.Users
 import com.devrats.features.scoring.models.RecentScoreResponse
 import com.devrats.features.scoring.models.ScoreSummaryResponse
 import com.devrats.features.scoring.models.DailyScoreResponse
@@ -8,6 +9,8 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 
 fun Application.scoringRoutes() {
@@ -17,6 +20,9 @@ fun Application.scoringRoutes() {
             route("/api/scores") {
                 get("/me") {
                     val uid = call.userId()
+                    val user = transaction {
+                        Users.selectAll().where { Users.id eq uid }.singleOrNull()
+                    }
                     val recent = repo.getRecentScores(uid).map {
                         RecentScoreResponse(
                             id = it[com.devrats.features.scoring.models.Scores.id],
@@ -27,10 +33,10 @@ fun Application.scoringRoutes() {
                     val todayScore = repo.getTodayScores(uid)
                     call.respond(ScoreSummaryResponse(
                         recentScores = recent, 
-                        totalScore = 0, 
+                        totalScore = user?.get(Users.totalScore) ?: 0, 
                         todayScore = todayScore,
-                        currentStreak = 0, 
-                        bestStreak = 0, 
+                        currentStreak = user?.get(Users.currentStreak) ?: 0, 
+                        bestStreak = user?.get(Users.bestStreak) ?: 0, 
                         streakBonus = 0
                     ))
                 }

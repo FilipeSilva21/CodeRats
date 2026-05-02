@@ -46,9 +46,13 @@ class ScoringRepository {
     }
 
     fun getTodayScores(userId: String): Int = transaction {
-        val today = java.time.LocalDate.now().toString()
-        Scores.selectAll().where { (Scores.userId eq userId) }
-            .sumOf { it[Scores.points] }
+        val startOfDay = java.time.LocalDate.now()
+            .atStartOfDay(java.time.ZoneOffset.UTC)
+            .toInstant()
+            .let { kotlinx.datetime.Instant.fromEpochMilliseconds(it.toEpochMilli()) }
+        Scores.selectAll().where { 
+            (Scores.userId eq userId) and (Scores.scoredAt greaterEq startOfDay) 
+        }.sumOf { it[Scores.points] }
     }
 
     fun getRecentScores(userId: String, limit: Int = 10) = transaction {

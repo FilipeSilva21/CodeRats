@@ -6,6 +6,7 @@ import { Card } from '../../src/components/ui/Card';
 import { Badge } from '../../src/components/ui/Badge';
 import { Avatar } from '../../src/components/ui/Avatar';
 import { theme } from '../../src/theme';
+import { useWebSocket } from '../../src/lib/websocket';
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
@@ -18,6 +19,14 @@ export default function HomeScreen() {
   useEffect(() => {
     loadData();
   }, []);
+
+  useWebSocket('/leaderboard/global', {
+    onMessage: (data) => {
+      if (data.type === 'SCORE_UPDATED') {
+        loadData();
+      }
+    }
+  });
 
   const progressPercent = Math.min((todayScore / dailyCap) * 100, 100) || 0;
 
