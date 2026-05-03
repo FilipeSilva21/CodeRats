@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, RefreshControl, Touch
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { useScoringStore } from '../../src/features/scoring/store/scoringStore';
 import { Card } from '../../src/components/ui/Card';
-import { Badge } from '../../src/components/ui/Badge';
 import { Avatar } from '../../src/components/ui/Avatar';
 import { useTheme, useStyles } from '../../src/theme';
 import { useWebSocket } from '../../src/lib/websocket';
@@ -37,7 +36,7 @@ export default function HomeScreen() {
   return (
     <View style={s.c}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={s.scroll}
           refreshControl={<RefreshControl refreshing={isLoading} onRefresh={loadData} tintColor={theme.colors.primary} />}
         >
@@ -63,7 +62,7 @@ export default function HomeScreen() {
                 <Text style={s.streakText}>{user?.currentStreak || 0} Days</Text>
               </View>
             </View>
-            
+
             <View style={s.progressContainer}>
               <View style={s.progressHeader}>
                 <Text style={s.progressText}>Daily Goal</Text>
@@ -104,7 +103,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </Link>
           </View>
-          
+
           {recentScores.length === 0 ? (
             <Card style={s.emptyCard}>
               <Ionicons name="code-slash-outline" size={32} color={theme.colors.textMuted} />
@@ -121,7 +120,7 @@ export default function HomeScreen() {
                     </View>
                     <View>
                       <Text style={s.activityTitle}>Commit Pushed</Text>
-                      <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0,7)}</Text>
+                      <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0, 7)}</Text>
                     </View>
                   </View>
                   <View style={s.pointsPill}>
@@ -131,7 +130,7 @@ export default function HomeScreen() {
               ))}
             </View>
           )}
-          
+
           <View style={{ height: 80 }} />
         </ScrollView>
       </SafeAreaView>
@@ -140,16 +139,16 @@ export default function HomeScreen() {
 }
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
-  c: { flex: 1, backgroundColor: theme.colors.background }, 
+  c: { flex: 1, backgroundColor: theme.colors.background },
   scroll: { paddingHorizontal: 24, paddingVertical: 16, gap: 16, paddingTop: 16 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  greeting: { color: theme.colors.textSecondary, fontSize: 16, fontWeight: '500' as const, marginBottom: 4 }, 
+  greeting: { color: theme.colors.textSecondary, fontSize: 16, fontWeight: '500' as const, marginBottom: 4 },
   name: { color: theme.colors.text, fontSize: 32, fontWeight: '800' as const, letterSpacing: -0.5 },
   avatarContainer: { position: 'relative' as const },
   onlineIndicator: { position: 'absolute' as const, bottom: 2, right: 2, width: 14, height: 14, borderRadius: 7, backgroundColor: theme.colors.success, borderWidth: 2, borderColor: theme.colors.background },
   mainCard: { padding: 0, overflow: 'hidden' as const },
   mainCardInner: { paddingHorizontal: 24, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' as const },
-  scoreLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700' as const, letterSpacing: 1.5, marginBottom: 8 }, 
+  scoreLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700' as const, letterSpacing: 1.5, marginBottom: 8 },
   scoreVal: { color: theme.colors.text, fontSize: 48, fontWeight: '900' as const, letterSpacing: -2, lineHeight: 52 },
   streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.backgroundSecondary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: theme.borderRadius.full, gap: 6, borderWidth: 1, borderColor: theme.colors.border },
   streakText: { color: theme.colors.warning, fontWeight: '700' as const, fontSize: 13 },
@@ -162,10 +161,10 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   seeAll: { color: theme.colors.primary, fontSize: 14, fontWeight: '600' as const },
   bar: { height: 6, backgroundColor: theme.colors.border, borderRadius: 3, overflow: 'hidden' as const },
   fill: { height: '100%', borderRadius: 3 },
-  grid: { flexDirection: 'row', gap: 12 }, 
+  grid: { flexDirection: 'row', gap: 12 },
   stat: { flex: 1, alignItems: 'flex-start' as const, paddingHorizontal: 20, paddingVertical: 12 },
   iconBox: { width: 40, height: 40, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
-  statVal: { color: theme.colors.text, fontSize: 28, fontWeight: '800' as const, letterSpacing: -1, marginBottom: 2 }, 
+  statVal: { color: theme.colors.text, fontSize: 28, fontWeight: '800' as const, letterSpacing: -1, marginBottom: 2 },
   statLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '600' as const },
   activityList: { gap: 12 },
   activityRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.border },
