@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import api from '../../../lib/api';
 
 interface LeaderboardUser {
-  id: string;
+  userId: string;
   username: string;
   displayName: string;
   avatarUrl: string | null;

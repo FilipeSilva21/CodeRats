@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, TextInput, ActivityIndicator, Alert, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { theme } from '../../src/theme';
+import { useTheme, useStyles } from '../../src/theme';
 import { Card } from '../../src/components/ui/Card';
 import { Button } from '../../src/components/ui/Button';
-import { useSquadStore, Squad } from '../../src/features/squad/store/squadStore';
+import { useSquadStore } from '../../src/features/squad/store/squadStore';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SquadScreen() {
   const { squads, currentSquad, members, isLoading, fetchMySquads, createSquad, joinSquad, fetchSquadDetails, clearCurrentSquad, updateSquad, leaveSquad } = useSquadStore();
   const { user } = useAuthStore();
+  const theme = useTheme();
+  const s = useStyles(styles);
   const [activeTab, setActiveTab] = useState<'my_squads' | 'add_squad'>('my_squads');
   
   const [newSquadName, setNewSquadName] = useState('');
@@ -88,203 +91,242 @@ export default function SquadScreen() {
     const isOwner = currentSquad.ownerId === user?.id;
 
     return (
-      <SafeAreaView style={s.c}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 12 }}>
-          <TouchableOpacity onPress={clearCurrentSquad}>
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Text style={s.title} numberOfLines={1}>{editMode ? 'Edit Squad' : currentSquad.name}</Text>
-        </View>
+      <View style={s.c}>
+        <LinearGradient colors={['rgba(99, 102, 241, 0.1)', 'transparent']} style={StyleSheet.absoluteFill} />
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24, gap: 16, paddingHorizontal: 24, paddingTop: 16 }}>
+            <TouchableOpacity onPress={clearCurrentSquad} style={s.backBtn}>
+              <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
+            </TouchableOpacity>
+            <Text style={s.title} numberOfLines={1}>{editMode ? 'Edit Squad' : currentSquad.name}</Text>
+          </View>
 
-        {editMode ? (
-          <ScrollView contentContainerStyle={{ gap: 12 }}>
-            <Text style={{ color: theme.colors.textSecondary, marginBottom: -4 }}>Squad Name</Text>
-            <TextInput style={s.input} value={editName} onChangeText={setEditName} placeholder="Name" placeholderTextColor={theme.colors.textMuted} />
-            <Text style={{ color: theme.colors.textSecondary, marginTop: 4, marginBottom: -4 }}>Description</Text>
-            <TextInput style={[s.input, { height: 80 }]} value={editDesc} onChangeText={setEditDesc} placeholder="Description" placeholderTextColor={theme.colors.textMuted} multiline />
-            <Text style={{ color: theme.colors.textSecondary, marginTop: 4, marginBottom: -4 }}>Image URL</Text>
-            <TextInput style={s.input} value={editImg} onChangeText={setEditImg} placeholder="https://..." placeholderTextColor={theme.colors.textMuted} autoCapitalize="none" />
-            <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-              <Button title="Cancel" onPress={() => setEditMode(false)} variant="ghost" style={{ flex: 1 }} />
-              <Button title="Save Changes" onPress={handleSaveEdit} variant="primary" style={{ flex: 1 }} />
-            </View>
-          </ScrollView>
-        ) : (
-          <>
-            <View style={{ alignItems: 'center', marginBottom: 24 }}>
-              {currentSquad.imageUrl ? (
-                <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 90, height: 90, borderRadius: 45, marginBottom: 12, borderWidth: 2, borderColor: theme.colors.primary }} />
-              ) : (
-                <View style={{ width: 90, height: 90, borderRadius: 45, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', marginBottom: 12, borderWidth: 2, borderColor: theme.colors.glassBorder }}>
-                  <Text style={{ fontSize: 36 }}>👥</Text>
-                </View>
-              )}
-              <Text style={{ color: theme.colors.textSecondary, textAlign: 'center', marginBottom: 12, paddingHorizontal: 16, lineHeight: 20 }}>
-                {currentSquad.description || 'No description provided.'}
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.colors.glass, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 }}>
-                <Ionicons name="key" size={14} color={theme.colors.accent} />
-                <Text style={s.squadCode}>{currentSquad.inviteCode}</Text>
+          {editMode ? (
+            <ScrollView contentContainerStyle={{ gap: 16, paddingHorizontal: 24 }}>
+              <View>
+                <Text style={s.inputLabel}>Squad Name</Text>
+                <TextInput style={s.input} value={editName} onChangeText={setEditName} placeholder="Name" placeholderTextColor={theme.colors.textMuted} />
               </View>
-            </View>
-
-            <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
-              {isOwner ? (
-                <Button title="Edit Details" onPress={() => {
-                  setEditName(currentSquad.name);
-                  setEditDesc(currentSquad.description || '');
-                  setEditImg(currentSquad.imageUrl || '');
-                  setEditMode(true);
-                }} variant="secondary" style={{ flex: 1 }} icon={<Ionicons name="pencil" size={16} color="white" />} />
-              ) : (
-                <Button title="Leave Squad" onPress={handleLeave} variant="danger" style={{ flex: 1 }} icon={<Ionicons name="exit" size={16} color="white" />} />
-              )}
-            </View>
-
-            <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '700', marginBottom: 12 }}>
-              Members ({currentSquad.memberCount}/{currentSquad.maxMembers})
-            </Text>
-            <FlatList
-              data={members}
-              keyExtractor={m => m.userId}
-              contentContainerStyle={{ gap: 8 }}
-              renderItem={({ item }) => (
-                <Card variant="glass" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                    {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={{ width: 40, height: 40, borderRadius: 20 }} /> : <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: theme.colors.border }} />}
-                    <View>
-                      <Text style={{ color: theme.colors.text, fontWeight: '600', fontSize: 16 }}>{item.displayName}</Text>
-                      <Text style={{ color: theme.colors.textSecondary, fontSize: 13, marginTop: 2, textTransform: 'capitalize' }}>
-                        {item.role} {item.userId === currentSquad.ownerId && '👑'}
-                      </Text>
+              <View>
+                <Text style={s.inputLabel}>Description</Text>
+                <TextInput style={[s.input, { height: 100, textAlignVertical: 'top' }]} value={editDesc} onChangeText={setEditDesc} placeholder="Description" placeholderTextColor={theme.colors.textMuted} multiline />
+              </View>
+              <View>
+                <Text style={s.inputLabel}>Image URL</Text>
+                <TextInput style={s.input} value={editImg} onChangeText={setEditImg} placeholder="https://..." placeholderTextColor={theme.colors.textMuted} autoCapitalize="none" />
+              </View>
+              <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
+                <Button title="Cancel" onPress={() => setEditMode(false)} variant="secondary" style={{ flex: 1 }} />
+                <Button title="Save Changes" onPress={handleSaveEdit} variant="primary" style={{ flex: 1 }} />
+              </View>
+            </ScrollView>
+          ) : (
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}>
+              <Card variant="glass" style={s.squadDetailCard}>
+                <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center', marginBottom: 16 }}>
+                  {currentSquad.imageUrl ? (
+                    <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 72, height: 72, borderRadius: 16 }} />
+                  ) : (
+                    <LinearGradient colors={['rgba(99,102,241,0.2)', 'rgba(139,92,246,0.2)']} style={{ width: 72, height: 72, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder }}>
+                      <Ionicons name="people" size={32} color={theme.colors.primary} />
+                    </LinearGradient>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Invite Code</Text>
+                    <View style={s.codeContainer}>
+                      <Text style={s.squadCode}>{currentSquad.inviteCode}</Text>
+                      <Ionicons name="copy-outline" size={16} color={theme.colors.primary} />
                     </View>
                   </View>
-                  <Text style={{ color: theme.colors.accent, fontWeight: '800', fontSize: 16 }}>{item.totalScore} pts</Text>
-                </Card>
-              )}
-            />
-          </>
-        )}
-      </SafeAreaView>
+                </View>
+                <Text style={{ color: theme.colors.text, fontSize: 15, lineHeight: 24 }}>
+                  {currentSquad.description || 'No description provided for this squad.'}
+                </Text>
+              </Card>
+
+              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32 }}>
+                {isOwner ? (
+                  <Button title="Edit Squad" onPress={() => {
+                    setEditName(currentSquad.name);
+                    setEditDesc(currentSquad.description || '');
+                    setEditImg(currentSquad.imageUrl || '');
+                    setEditMode(true);
+                  }} variant="secondary" style={{ flex: 1 }} icon={<Ionicons name="pencil" size={16} color={theme.colors.text} />} />
+                ) : (
+                  <Button title="Leave Squad" onPress={handleLeave} variant="secondary" style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }} icon={<Ionicons name="exit" size={16} color={theme.colors.danger} />} />
+                )}
+              </View>
+
+              <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', marginBottom: 16, letterSpacing: -0.5 }}>
+                Members ({currentSquad.memberCount}/{currentSquad.maxMembers})
+              </Text>
+              
+              <View style={s.membersList}>
+                {members.map((item, index) => (
+                  <View key={item.userId} style={[s.memberRow, index === members.length - 1 && { borderBottomWidth: 0 }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                      {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} /> : <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface }} />}
+                      <View>
+                        <Text style={{ color: theme.colors.text, fontWeight: '700', fontSize: 16 }}>{item.displayName}</Text>
+                        <Text style={{ color: theme.colors.textMuted, fontSize: 13, marginTop: 2, textTransform: 'capitalize' }}>
+                          {item.role} {item.userId === currentSquad.ownerId && '• Owner'}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={s.scorePill}>
+                      <Text style={{ color: theme.colors.accent, fontWeight: '800', fontSize: 15 }}>{item.totalScore.toLocaleString()}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={s.c}>
-      <Text style={s.pageHeader}>Squads</Text>
-      
-      <View style={s.tabContainer}>
-        <TouchableOpacity style={[s.tab, activeTab === 'my_squads' && s.activeTab]} onPress={() => setActiveTab('my_squads')}>
-          <Text style={[s.tabText, activeTab === 'my_squads' && s.activeTabText]}>My Squads</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[s.tab, activeTab === 'add_squad' && s.activeTab]} onPress={() => setActiveTab('add_squad')}>
-          <Text style={[s.tabText, activeTab === 'add_squad' && s.activeTabText]}>Create or Join</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={s.c}>
+      <LinearGradient colors={['rgba(99, 102, 241, 0.1)', 'transparent']} style={StyleSheet.absoluteFill} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <Text style={s.pageHeader}>Squads</Text>
+        
+        <View style={s.tabContainer}>
+          <TouchableOpacity style={[s.tab, activeTab === 'my_squads' && s.activeTab]} onPress={() => setActiveTab('my_squads')}>
+            <Text style={[s.tabText, activeTab === 'my_squads' && s.activeTabText]}>My Squads</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[s.tab, activeTab === 'add_squad' && s.activeTab]} onPress={() => setActiveTab('add_squad')}>
+            <Text style={[s.tabText, activeTab === 'add_squad' && s.activeTabText]}>Create or Join</Text>
+          </TouchableOpacity>
+        </View>
 
-      {activeTab === 'add_squad' ? (
-        <ScrollView style={{ marginTop: 24 }} contentContainerStyle={{ gap: 24 }}>
-          <View style={{ gap: 12 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Ionicons name="add-circle" size={20} color={theme.colors.primary} />
-              <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '700' }}>Create a New Squad</Text>
-            </View>
-            <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>Start your own leaderboard and invite friends.</Text>
-            <TextInput 
-              style={s.inputLarge} 
-              placeholder="Squad Name" 
-              placeholderTextColor={theme.colors.textMuted}
-              value={newSquadName}
-              onChangeText={setNewSquadName}
-            />
-            <Button title="Create Squad" onPress={handleCreate} loading={isCreating} variant="primary" size="lg" />
-          </View>
-
-          <View style={s.divider} />
-
-          <View style={{ gap: 12 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Ionicons name="enter" size={20} color={theme.colors.accent} />
-              <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '700' }}>Join an Existing Squad</Text>
-            </View>
-            <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>Got an invite code? Enter it below to join the competition.</Text>
-            <TextInput 
-              style={s.inputLarge} 
-              placeholder="6-Character Invite Code" 
-              placeholderTextColor={theme.colors.textMuted}
-              value={inviteCode}
-              onChangeText={setInviteCode}
-              autoCapitalize="characters"
-              maxLength={6}
-            />
-            <Button title="Join Squad" onPress={handleJoin} loading={isJoining} variant="secondary" size="lg" />
-          </View>
-        </ScrollView>
-      ) : (
-        <>
-          {isLoading && squads.length === 0 ? (
-            <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 40 }} />
-          ) : squads.length === 0 ? (
-            <Card variant="glass" style={{ alignItems: 'center', gap: 12, paddingVertical: 48, marginTop: 24 }}>
-              <Text style={{ fontSize: 56 }}>👥</Text>
-              <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '700' }}>No squads yet</Text>
-              <Text style={{ color: theme.colors.textSecondary, fontSize: 15, textAlign: 'center', paddingHorizontal: 16 }}>
-                You are not competing in any squads. Create a new one or join with a code!
-              </Text>
-              <Button title="Find a Squad" onPress={() => setActiveTab('add_squad')} variant="ghost" size="md" style={{ marginTop: 12 }} />
+        {activeTab === 'add_squad' ? (
+          <ScrollView style={{ marginTop: 24 }} contentContainerStyle={{ gap: 32, paddingHorizontal: 24 }}>
+            <Card variant="glass" style={{ padding: 24 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <View style={[s.iconBox, { backgroundColor: 'rgba(99, 102, 241, 0.15)' }]}>
+                  <Ionicons name="add" size={24} color={theme.colors.primary} />
+                </View>
+                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.5 }}>Create Squad</Text>
+              </View>
+              <TextInput 
+                style={s.input} 
+                placeholder="Squad Name" 
+                placeholderTextColor={theme.colors.textMuted}
+                value={newSquadName}
+                onChangeText={setNewSquadName}
+              />
+              <Button title="Create Squad" onPress={handleCreate} loading={isCreating} variant="primary" size="lg" style={{ marginTop: 16 }} />
             </Card>
-          ) : (
-            <FlatList
-              data={squads}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{ gap: 16, paddingBottom: 24, marginTop: 20 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleSelectSquad(item.id)}>
-                  <Card variant="glass" style={s.squadCard}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-                      {item.imageUrl ? (
-                        <Image source={{ uri: item.imageUrl }} style={{ width: 48, height: 48, borderRadius: 24 }} />
-                      ) : (
-                        <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center' }}>
-                          <Text style={{ fontSize: 20 }}>👥</Text>
+
+            <View style={s.dividerContainer}>
+              <View style={s.dividerLine} />
+              <Text style={s.dividerText}>OR</Text>
+              <View style={s.dividerLine} />
+            </View>
+
+            <Card variant="glass" style={{ padding: 24 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <View style={[s.iconBox, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
+                  <Ionicons name="enter-outline" size={24} color={theme.colors.accent} />
+                </View>
+                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.5 }}>Join Squad</Text>
+              </View>
+              <TextInput 
+                style={s.input} 
+                placeholder="6-Character Invite Code" 
+                placeholderTextColor={theme.colors.textMuted}
+                value={inviteCode}
+                onChangeText={setInviteCode}
+                autoCapitalize="characters"
+                maxLength={6}
+              />
+              <Button title="Join Squad" onPress={handleJoin} loading={isJoining} variant="secondary" size="lg" style={{ marginTop: 16 }} />
+            </Card>
+          </ScrollView>
+        ) : (
+          <>
+            {isLoading && squads.length === 0 ? (
+              <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 40 }} />
+            ) : squads.length === 0 ? (
+              <View style={{ alignItems: 'center', gap: 16, paddingVertical: 64, paddingHorizontal: 24 }}>
+                <LinearGradient colors={['rgba(99,102,241,0.2)', 'rgba(139,92,246,0.2)']} style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="people-outline" size={40} color={theme.colors.primary} />
+                </LinearGradient>
+                <Text style={{ color: theme.colors.text, fontSize: 22, fontWeight: '800' }}>No squads yet</Text>
+                <Text style={{ color: theme.colors.textSecondary, fontSize: 16, textAlign: 'center', lineHeight: 24 }}>
+                  You are not competing in any squads. Create a new one or join with a code!
+                </Text>
+                <Button title="Find a Squad" onPress={() => setActiveTab('add_squad')} variant="primary" size="md" style={{ marginTop: 16, paddingHorizontal: 32 }} />
+              </View>
+            ) : (
+              <FlatList
+                data={squads}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ gap: 16, paddingBottom: 100, paddingTop: 24, paddingHorizontal: 24 }}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleSelectSquad(item.id)} activeOpacity={0.7}>
+                    <Card variant="glass" style={s.squadCard}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                        {item.imageUrl ? (
+                          <Image source={{ uri: item.imageUrl }} style={{ width: 56, height: 56, borderRadius: 12 }} />
+                        ) : (
+                          <LinearGradient colors={['rgba(99,102,241,0.15)', 'rgba(139,92,246,0.15)']} style={{ width: 56, height: 56, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder }}>
+                            <Ionicons name="people" size={24} color={theme.colors.primary} />
+                          </LinearGradient>
+                        )}
+                        <View style={{ flex: 1 }}>
+                          <Text style={s.squadName}>{item.name}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 8 }}>
+                            <View style={s.codeTag}>
+                              <Text style={s.squadCodeSmall}>{item.inviteCode}</Text>
+                            </View>
+                          </View>
                         </View>
-                      )}
-                      <View>
-                        <Text style={s.squadName}>{item.name}</Text>
-                        <Text style={s.squadCodeSmall}>Code: {item.inviteCode}</Text>
                       </View>
-                    </View>
-                    <View style={s.memberBadge}>
-                      <Ionicons name="people" size={16} color={theme.colors.accent} />
-                      <Text style={s.memberCount}>{item.memberCount}/{item.maxMembers}</Text>
-                    </View>
-                  </Card>
-                </TouchableOpacity>
-              )}
-            />
-          )}
-        </>
-      )}
-    </SafeAreaView>
+                      <View style={s.memberBadge}>
+                        <Ionicons name="people" size={14} color={theme.colors.primary} />
+                        <Text style={s.memberCount}>{item.memberCount}/{item.maxMembers}</Text>
+                      </View>
+                    </Card>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
+          </>
+        )}
+      </SafeAreaView>
+    </View>
   );
 }
 
-const s = StyleSheet.create({
-  c: { flex: 1, backgroundColor: theme.colors.background, padding: 24 },
-  pageHeader: { color: theme.colors.text, fontSize: 32, fontWeight: '800', marginBottom: 20, letterSpacing: -0.5 },
-  title: { color: theme.colors.text, fontSize: 24, fontWeight: '800', flex: 1 },
-  tabContainer: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 4 },
-  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 8 },
-  activeTab: { backgroundColor: theme.colors.surface, ...theme.shadows.glow },
-  tabText: { color: theme.colors.textMuted, fontSize: 14, fontWeight: '600' },
-  activeTabText: { color: theme.colors.primary },
-  input: { backgroundColor: theme.colors.surface, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, fontSize: 16 },
-  inputLarge: { backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 12, paddingHorizontal: 20, paddingVertical: 16, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, fontSize: 16 },
-  divider: { height: 1, backgroundColor: theme.colors.border, marginVertical: 8 },
-  squadCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
-  squadName: { color: theme.colors.text, fontSize: 18, fontWeight: '700' },
-  squadCode: { color: theme.colors.accent, fontSize: 16, fontWeight: '700', fontFamily: 'monospace', letterSpacing: 2 },
-  squadCodeSmall: { color: theme.colors.textSecondary, fontSize: 13, marginTop: 4, fontFamily: 'monospace' },
-  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(56, 189, 248, 0.1)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
-  memberCount: { color: theme.colors.accent, fontWeight: '700', fontSize: 14 }
+const styles = (theme: ReturnType<typeof useTheme>) => ({
+  c: { flex: 1, backgroundColor: theme.colors.background },
+  backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
+  pageHeader: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, marginBottom: 24, letterSpacing: -1, paddingHorizontal: 24, paddingTop: 16 },
+  title: { color: theme.colors.text, fontSize: 24, fontWeight: '900' as const, flex: 1, letterSpacing: -0.5 },
+  tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder, paddingHorizontal: 24 },
+  tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
+  activeTab: { borderBottomWidth: 2, borderBottomColor: theme.colors.primary },
+  tabText: { color: theme.colors.textMuted, fontSize: 16, fontWeight: '600' as const },
+  activeTabText: { color: theme.colors.primary, fontWeight: '800' as const },
+  inputLabel: { color: theme.colors.textSecondary, fontSize: 14, fontWeight: '700' as const, marginBottom: 8 },
+  input: { backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 16, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.glassBorder, fontSize: 16 },
+  squadDetailCard: { padding: 24, marginBottom: 24, borderWidth: 1, borderColor: theme.colors.glassBorder, borderRadius: theme.borderRadius.xl },
+  codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, backgroundColor: 'rgba(99,102,241,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, alignSelf: 'flex-start' as const },
+  squadCode: { color: theme.colors.primary, fontSize: 16, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 2 },
+  squadCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderWidth: 1, borderColor: theme.colors.glassBorder },
+  squadName: { color: theme.colors.text, fontSize: 18, fontWeight: '800' as const, letterSpacing: -0.5 },
+  codeTag: { backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.glassBorder },
+  squadCodeSmall: { color: theme.colors.textMuted, fontSize: 12, fontFamily: 'monospace', fontWeight: '700' as const },
+  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderWidth: 1, borderColor: 'rgba(99, 102, 241, 0.2)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20 },
+  memberCount: { color: theme.colors.primary, fontWeight: '800' as const, fontSize: 14 },
+  membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl, borderWidth: 1, borderColor: theme.colors.glassBorder, overflow: 'hidden' as const },
+  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder },
+  scorePill: { backgroundColor: 'rgba(139, 92, 246, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  iconBox: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.glassBorder },
+  dividerText: { color: theme.colors.textMuted, fontSize: 14, fontWeight: '700' as const }
 });

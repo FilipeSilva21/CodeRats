@@ -11,7 +11,15 @@ fun Application.leaderboardRoutes() {
         route("/api/leaderboard") {
             get("/global") {
                 val limit = call.parameters["limit"]?.toIntOrNull() ?: 50
-                call.respond(service.getGlobalLeaderboard(limit))
+                val league = call.parameters["league"]
+                call.respond(service.getGlobalLeaderboard(limit, league))
+            }
+            
+            post("/admin/process-leagues") {
+                // In a real app this should be protected by admin auth
+                val leagueService = com.devrats.features.scoring.services.LeagueService()
+                leagueService.processWeeklyLeagues()
+                call.respond(mapOf("success" to true, "message" to "Leagues processed"))
             }
         }
     }

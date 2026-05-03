@@ -29,7 +29,8 @@ class AuthService(private val repo: AuthRepository, private val jwt: JwtProvider
                 avatarUrl = user[Users.avatarUrl],
                 totalScore = user[Users.totalScore], 
                 currentStreak = user[Users.currentStreak], 
-                bestStreak = user[Users.bestStreak]
+                bestStreak = user[Users.bestStreak],
+                league = user[Users.league]
             )
         )
     }
@@ -54,7 +55,8 @@ class AuthService(private val repo: AuthRepository, private val jwt: JwtProvider
             avatarUrl = user[Users.avatarUrl],
             totalScore = user[Users.totalScore], 
             currentStreak = user[Users.currentStreak], 
-            bestStreak = user[Users.bestStreak]
+            bestStreak = user[Users.bestStreak],
+            league = user[Users.league]
         )
     }
 }

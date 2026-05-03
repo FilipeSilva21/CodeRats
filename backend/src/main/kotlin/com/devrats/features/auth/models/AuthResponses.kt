@@ -10,7 +10,8 @@ data class UserProfile(
     val avatarUrl: String?,
     val totalScore: Int,
     val currentStreak: Int,
-    val bestStreak: Int
+    val bestStreak: Int,
+    val league: String
 )
 
 @Serializable

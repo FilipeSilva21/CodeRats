@@ -14,6 +14,7 @@ object Users : Table("users") {
     val currentStreak = integer("current_streak").default(0)
     val bestStreak = integer("best_streak").default(0)
     val lastCommitDate = varchar("last_commit_date", 20).nullable()
+    val league = varchar("league", 20).default("BRONZE")
     val createdAt = timestamp("created_at").defaultExpression(org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp)
     override val primaryKey = PrimaryKey(id)
 }

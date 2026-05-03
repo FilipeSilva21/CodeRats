@@ -1,16 +1,25 @@
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { theme } from '../../theme';
+import { useTheme, useStyles } from '../../theme';
 
-interface CardProps { children: ReactNode; variant?: 'default' | 'glass' | 'highlight'; style?: ViewStyle; }
-
-export function Card({ children, variant = 'default', style }: CardProps) {
-  return <View style={[s.base, s[variant], style]}>{children}</View>;
+interface CardProps { 
+  children: ReactNode; 
+  style?: ViewStyle | ViewStyle[]; 
+  // Mantemos a prop de variant por retrocompatibilidade no código, mas ela aplicará o mesmo estilo Clean Modern
+  variant?: 'default' | 'glass' | 'highlight'; 
 }
 
-const s = StyleSheet.create({
-  base: { borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, ...theme.shadows.md },
-  default: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border },
-  glass: { backgroundColor: theme.colors.glass, borderWidth: 1, borderColor: theme.colors.glassBorder },
-  highlight: { backgroundColor: theme.colors.surface, borderWidth: 1.5, borderColor: theme.colors.primary, ...theme.shadows.glow },
+export function Card({ children, variant = 'default', style }: CardProps) {
+  const s = useStyles(styles);
+  return <View style={[s.base, style]}>{children}</View>;
+}
+
+const styles = (theme: ReturnType<typeof useTheme>) => ({
+  base: { 
+    backgroundColor: theme.colors.surface, 
+    borderWidth: 1, 
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.lg, 
+    padding: theme.spacing.lg 
+  },
 });

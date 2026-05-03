@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { storage } from '../../../lib/storage';
 import api from '../../../lib/api';
 
-interface User { id: string; username: string; displayName: string; avatarUrl: string | null; totalScore: number; currentStreak: number; bestStreak: number; }
+interface User { id: string; username: string; displayName: string; avatarUrl: string | null; totalScore: number; currentStreak: number; bestStreak: number; league?: string; }
 interface AuthState { user: User | null; isAuthenticated: boolean; isLoading: boolean; error: string | null; login: (code: string) => Promise<void>; logout: () => Promise<void>; loadSession: () => Promise<void>; fetchProfile: () => Promise<void>; }
 
 export const useAuthStore = create<AuthState>((set, get) => ({

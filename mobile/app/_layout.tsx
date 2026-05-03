@@ -3,7 +3,8 @@ import { Slot, useRouter, useSegments, useRootNavigationState } from 'expo-route
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, LogBox } from 'react-native';
 import { useAuthStore } from '../src/features/auth/store/authStore';
-import { theme } from '../src/theme';
+import { useTheme } from '../src/theme';
+import { useThemeStore } from '../src/theme/themeStore';
 
 LogBox.ignoreLogs([
   '"shadow*" style props are deprecated. Use "boxShadow".',
@@ -15,6 +16,8 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
   const navigationState = useRootNavigationState();
+  const theme = useTheme();
+  const { themeMode } = useThemeStore();
 
   useEffect(() => { loadSession(); }, []);
 
@@ -38,12 +41,15 @@ export default function RootLayout() {
     return () => clearTimeout(timer);
   }, [isAuthenticated, isLoading, segments, navigationState?.key]);
 
+  const isLight = themeMode === 'light' || theme.colors.background === '#FFFFFF';
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <StatusBar style={isLight ? 'dark' : 'light'} />
       <Slot />
     </View>
   );
 }
 
-const styles = StyleSheet.create({ container: { flex: 1, backgroundColor: theme.colors.background } });
+const styles = StyleSheet.create({ container: { flex: 1 } });
+
