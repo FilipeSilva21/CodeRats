@@ -41,7 +41,7 @@ export default function ActivityScreen() {
                   </LinearGradient>
                   <View>
                     <Text style={s.activityTitle}>Commit Pushed</Text>
-                    <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0,7)}</Text>
+                    <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0, 7)}</Text>
                   </View>
                 </View>
                 <View style={s.pointsPill}>

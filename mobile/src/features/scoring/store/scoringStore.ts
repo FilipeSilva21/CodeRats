@@ -4,34 +4,31 @@ import api from '../../../lib/api';
 interface ScoringState {
   totalScore: number;
   todayScore: number;
+  dailyCap: number;
   currentStreak: number;
   bestStreak: number;
-  streakBonus: number;
-  dailyCap: number;
-  capped: boolean;
-  recentScores: any[];
+  streakBonus: number | null;
+  recentScores: { points: number; scoredAt: string; commitHash: string | null }[];
   isLoading: boolean;
   fetchScoreSummary: () => Promise<void>;
   fetchDailyProgress: () => Promise<void>;
 }
 
-export const useScoringStore = create<ScoringState>((set) => ({
+export const useScoringStore = create<ScoringState>((set, get) => ({
   totalScore: 0,
   todayScore: 0,
+  dailyCap: 1000,
   currentStreak: 0,
   bestStreak: 0,
-  streakBonus: 0,
-  dailyCap: 200,
-  capped: false,
+  streakBonus: null,
   recentScores: [],
   isLoading: false,
 
   fetchScoreSummary: async () => {
     set({ isLoading: true });
     try {
-      console.log('[ScoringStore] Fetching score summary...');
       const { data } = await api.get('/scores/me');
-      console.log('[ScoringStore] Score summary received:', JSON.stringify(data));
+
       set({
         totalScore: data.totalScore,
         todayScore: data.todayScore,
@@ -49,9 +46,8 @@ export const useScoringStore = create<ScoringState>((set) => ({
 
   fetchDailyProgress: async () => {
     try {
-      console.log('[ScoringStore] Fetching daily progress...');
       const { data } = await api.get('/scores/me/daily');
-      console.log('[ScoringStore] Daily progress received:', JSON.stringify(data));
+
       set({ todayScore: data.totalPoints, capped: data.capped, dailyCap: data.dailyCap });
     } catch (e: any) {
       console.error('[ScoringStore] fetchDailyProgress FAILED:', e.response?.status, e.response?.data || e.message);

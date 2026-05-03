@@ -1,42 +1,42 @@
 import { create } from 'zustand';
 
-// Tema Claro: "Quase branco", seguindo Clean Modern (alto contraste, limpo)
+// Tema Claro Refinado: Mais suave, melhor legibilidade e hierarquia visual
 export const lightColors = {
-  primary: '#09090B', // Zinc 950 (Quase preto para botões primários)
-  primaryText: '#FAFAFA', // Zinc 50
-  accent: '#007AFF', // Electric Blue
-  background: '#FCFCFC', // Quase branco
-  backgroundSecondary: '#F4F4F5', // Zinc 100
-  backgroundTertiary: '#E4E4E7', // Zinc 200
-  surface: '#FFFFFF', // Branco puro para cards
-  border: '#E4E4E7', // Zinc 200
-  text: '#09090B', // Zinc 950
-  textSecondary: '#52525B', // Zinc 500
-  textMuted: '#A1A1AA', // Zinc 400
-  success: '#10B981', // Emerald
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  glass: 'rgba(255, 255, 255, 0.9)',
-  glassBorder: 'rgba(0, 0, 0, 0.05)',
-};
-
-// Tema Escuro: Fundo ao redor de #171a25, moderno, sem brilhos
-export const darkColors = {
-  primary: '#FAFAFA', // Zinc 50 (Branco para botões primários, estilo premium)
-  primaryText: '#000000', // Preto no texto do botão primário
-  accent: '#10B981', // Neon Green (para quebrar a monocromia de forma vibrante)
-  background: '#171A25', // Cor solicitada pelo usuário
-  backgroundSecondary: '#1E212D', // Levemente mais claro que o fundo
-  backgroundTertiary: '#2A2E3D', // Para hovers ou destaques sutis
-  surface: '#1E212D', // Cards com cor sólida, sem vidro
-  border: '#2A2E3D', // Bordas sutis
-  text: '#FAFAFA', // Zinc 50
-  textSecondary: '#A1A1AA', // Zinc 400
-  textMuted: '#71717A', // Zinc 500
+  primary: '#0F172A', // Slate 900 (Branding forte)
+  primaryText: '#FFFFFF',
+  accent: '#3B82F6', // Blue 500 (Mais padrão e confiável que o Electric Blue)
+  background: '#F8FAFC', // Slate 50 (Levemente acinzentado para reduzir fadiga ocular)
+  backgroundSecondary: '#F1F5F9', // Slate 100
+  backgroundTertiary: '#E2E8F0', // Slate 200
+  surface: '#FFFFFF', // Branco puro para os cards para dar profundidade sobre o fundo cinza
+  border: '#E2E8F0', // Slate 200
+  text: '#1E293B', // Slate 800 (Mais suave que o preto, tom sofisticado)
+  textSecondary: '#475569', // Slate 600
+  textMuted: '#94A3B8', // Slate 400
   success: '#10B981',
   warning: '#F59E0B',
   danger: '#EF4444',
-  glass: 'rgba(30, 33, 45, 0.9)', // Adaptado para a nova cor sólida
+  glass: 'rgba(255, 255, 255, 0.95)',
+  glassBorder: 'rgba(15, 23, 42, 0.05)',
+};
+
+// Tema Escuro: Fundo #171A25 mantido conforme solicitado anteriormente
+export const darkColors = {
+  primary: '#FAFAFA', 
+  primaryText: '#000000', 
+  accent: '#10B981', 
+  background: '#171A25', 
+  backgroundSecondary: '#1E212D', 
+  backgroundTertiary: '#2A2E3D', 
+  surface: '#1E212D', 
+  border: '#2A2E3D', 
+  text: '#FAFAFA', 
+  textSecondary: '#A1A1AA', 
+  textMuted: '#71717A', 
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  glass: 'rgba(30, 33, 45, 0.9)', 
   glassBorder: 'rgba(255, 255, 255, 0.05)',
 };
 
