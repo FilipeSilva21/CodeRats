@@ -88,10 +88,10 @@ const s = StyleSheet.create({
   subtitle: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 8, fontWeight: '500' },
   features: { gap: 20, marginTop: 40, flex: 1 },
   feat: {
-    flexDirection: 'row', alignItems: 'center', gap: 16,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
   },
   featText: { color: theme.colors.text, fontSize: 16, fontWeight: '600' },
-  loginArea: { alignItems: 'center', gap: 16, marginBottom: 20 },
+  loginArea: { alignItems: 'center', gap: 12, marginBottom: 20 },
   errorBox: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     backgroundColor: 'rgba(239,68,68,0.1)', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12,

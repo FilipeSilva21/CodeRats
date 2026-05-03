@@ -35,9 +35,9 @@ export default function LeaderboardScreen() {
 
   // Find current user's league or default to Bronze
   const currentLeague = currentUser?.league || 'BRONZE';
-  
+
   const getLeagueTheme = (league: string) => {
-    switch(league) {
+    switch (league) {
       case 'DIAMOND': return { color: '#60A5FA', name: 'Diamond League', icon: 'sparkles' };
       case 'PLATINUM': return { color: '#34D399', name: 'Platinum League', icon: 'star' };
       case 'GOLD': return { color: '#FBBF24', name: 'Gold League', icon: 'trophy' };
@@ -60,11 +60,11 @@ export default function LeaderboardScreen() {
           const isSecond = idx === 0;
           const isThird = idx === 2;
           const isCurrentUser = user.userId === currentUser?.id;
-          
+
           let podiumHeight = 100;
           let colors = ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)'];
           let crownColor = theme.colors.textMuted;
-          
+
           if (isFirst) {
             podiumHeight = 140;
             colors = [`${leagueTheme.color}33`, 'rgba(255,255,255,0)'];
@@ -102,11 +102,11 @@ export default function LeaderboardScreen() {
   const renderItem = ({ item, index }: { item: any, index: number }) => {
     const globalRank = index + 4; // Since we slice first 3
     const isCurrentUser = item.userId === currentUser?.id;
-    
+
     let zoneType = 'safe';
     let zoneColor = 'transparent';
     let label = '';
-    
+
     if (globalRank <= promotionCount) {
       zoneType = 'promotion';
       zoneColor = 'rgba(16, 185, 129, 0.1)'; // Success Green
@@ -118,22 +118,22 @@ export default function LeaderboardScreen() {
     }
 
     // Show label only for the first person in that zone
-    const showZoneLabel = (zoneType === 'promotion' && globalRank === 4) || 
-                          (zoneType === 'safe' && globalRank === promotionCount + 1) || 
-                          (zoneType === 'demotion' && globalRank === totalUsers - demotionCount + 1);
+    const showZoneLabel = (zoneType === 'promotion' && globalRank === 4) ||
+      (zoneType === 'safe' && globalRank === promotionCount + 1) ||
+      (zoneType === 'demotion' && globalRank === totalUsers - demotionCount + 1);
 
     return (
       <View>
         {showZoneLabel && (
-          <View style={[s.zoneHeader, 
-            zoneType === 'promotion' ? { backgroundColor: 'rgba(16, 185, 129, 0.15)' } : 
-            zoneType === 'demotion' ? { backgroundColor: 'rgba(239, 68, 68, 0.15)' } : 
-            { backgroundColor: theme.colors.surface }
+          <View style={[s.zoneHeader,
+          zoneType === 'promotion' ? { backgroundColor: 'rgba(16, 185, 129, 0.15)' } :
+            zoneType === 'demotion' ? { backgroundColor: 'rgba(239, 68, 68, 0.15)' } :
+              { backgroundColor: theme.colors.surface }
           ]}>
-            <Text style={[s.zoneHeaderText, 
-              zoneType === 'promotion' ? { color: theme.colors.success } : 
-              zoneType === 'demotion' ? { color: theme.colors.danger } : 
-              { color: theme.colors.textSecondary }
+            <Text style={[s.zoneHeaderText,
+            zoneType === 'promotion' ? { color: theme.colors.success } :
+              zoneType === 'demotion' ? { color: theme.colors.danger } :
+                { color: theme.colors.textSecondary }
             ]}>
               {zoneType === 'safe' ? 'Safe Zone' : label}
             </Text>
@@ -181,7 +181,7 @@ export default function LeaderboardScreen() {
           <FlatList
             data={users.slice(3)}
             keyExtractor={(item) => item.userId}
-            contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 24 }}
+            contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 24 }}
             ListHeaderComponent={renderTopThree}
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={fetchGlobalLeaderboard} tintColor={theme.colors.primary} />}
             renderItem={renderItem}
@@ -195,12 +195,12 @@ export default function LeaderboardScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { marginBottom: 16, paddingHorizontal: 24, paddingTop: 16 },
-  leagueBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.surface, padding: 16, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.glassBorder, gap: 16, ...theme.shadows.md },
+  header: { marginBottom: 0, paddingHorizontal: 24, paddingTop: 0 },
+  leagueBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.surface, paddingHorizontal: 16, paddingVertical: 12, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.glassBorder, gap: 12, ...theme.shadows.md },
   leagueName: { fontSize: 24, fontWeight: '900' as const, letterSpacing: -0.5 },
   timerContainer: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
   timerText: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '600' as const },
-  topThreeContainer: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', marginBottom: 32, gap: 12, height: 260, marginTop: 16 },
+  topThreeContainer: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', marginBottom: 20, gap: 12, height: 260, marginTop: 16 },
   podiumCol: { alignItems: 'center', width: '30%' },
   podiumEmpty: { width: '30%' },
   podiumAvatar: { position: 'relative' as const, marginBottom: 8, alignItems: 'center', justifyContent: 'center' },
@@ -215,7 +215,7 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   rowCard: { padding: 12, marginBottom: 8, borderWidth: 1, borderColor: theme.colors.glassBorder },
   currentUserCard: { borderColor: theme.colors.primary, borderWidth: 2, transform: [{ scale: 1.02 }] },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  left: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  left: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   rank: { fontSize: 18, fontWeight: '900' as const, color: theme.colors.textMuted, width: 28, textAlign: 'center' },
   name: { color: theme.colors.text, fontSize: 16, fontWeight: '700' as const },
   currentUserText: { color: theme.colors.text, fontWeight: '900' as const },

@@ -24,7 +24,7 @@ export default function RootLayout() {
   useEffect(() => {
 
     if (!navigationState?.key || isLoading) return;
-    
+
     // Use a small timeout to let the router finish its initial state updates
     const timer = setTimeout(() => {
       const inAuthGroup = segments[0] === '(auth)' || segments[0] === 'auth';
@@ -34,7 +34,7 @@ export default function RootLayout() {
         router.replace('/(tabs)/home');
       }
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, [isAuthenticated, isLoading, segments, navigationState?.key]);
 
@@ -43,9 +43,21 @@ export default function RootLayout() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar style={isLight ? 'dark' : 'light'} />
-      <Slot />
+      <View style={styles.appWrapper}>
+        <Slot />
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({ container: { flex: 1 } });
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  appWrapper: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
+    paddingTop: 40, // Padding superior maior para celulares (notch/status bar)
+    paddingBottom: 20, // Padding inferior menor
+  }
+});

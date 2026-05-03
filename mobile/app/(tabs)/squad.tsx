@@ -94,7 +94,7 @@ export default function SquadScreen() {
       <View style={s.c}>
         <LinearGradient colors={['rgba(99, 102, 241, 0.1)', 'transparent']} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24, gap: 16, paddingHorizontal: 24, paddingTop: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 12, paddingHorizontal: 24, paddingTop: 16 }}>
             <TouchableOpacity onPress={clearCurrentSquad} style={s.backBtn}>
               <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
             </TouchableOpacity>
@@ -102,7 +102,7 @@ export default function SquadScreen() {
           </View>
 
           {editMode ? (
-            <ScrollView contentContainerStyle={{ gap: 16, paddingHorizontal: 24 }}>
+            <ScrollView contentContainerStyle={{ gap: 12, paddingHorizontal: 24 }}>
               <View>
                 <Text style={s.inputLabel}>Squad Name</Text>
                 <TextInput style={s.input} value={editName} onChangeText={setEditName} placeholder="Name" placeholderTextColor={theme.colors.textMuted} />
@@ -121,9 +121,9 @@ export default function SquadScreen() {
               </View>
             </ScrollView>
           ) : (
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60 }}>
               <Card variant="glass" style={s.squadDetailCard}>
-                <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center', marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center', marginBottom: 16 }}>
                   {currentSquad.imageUrl ? (
                     <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 72, height: 72, borderRadius: 16 }} />
                   ) : (
@@ -144,7 +144,7 @@ export default function SquadScreen() {
                 </Text>
               </Card>
 
-              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32 }}>
+              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
                 {isOwner ? (
                   <Button title="Edit Squad" onPress={() => {
                     setEditName(currentSquad.name);
@@ -203,7 +203,7 @@ export default function SquadScreen() {
 
         {activeTab === 'add_squad' ? (
           <ScrollView style={{ marginTop: 24 }} contentContainerStyle={{ gap: 32, paddingHorizontal: 24 }}>
-            <Card variant="glass" style={{ padding: 24 }}>
+            <Card variant="glass" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <View style={[s.iconBox, { backgroundColor: 'rgba(99, 102, 241, 0.15)' }]}>
                   <Ionicons name="add" size={24} color={theme.colors.primary} />
@@ -226,7 +226,7 @@ export default function SquadScreen() {
               <View style={s.dividerLine} />
             </View>
 
-            <Card variant="glass" style={{ padding: 24 }}>
+            <Card variant="glass" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <View style={[s.iconBox, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
                   <Ionicons name="enter-outline" size={24} color={theme.colors.accent} />
@@ -250,7 +250,7 @@ export default function SquadScreen() {
             {isLoading && squads.length === 0 ? (
               <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 40 }} />
             ) : squads.length === 0 ? (
-              <View style={{ alignItems: 'center', gap: 16, paddingVertical: 64, paddingHorizontal: 24 }}>
+              <View style={{ alignItems: 'center', gap: 12, paddingVertical: 64, paddingHorizontal: 24 }}>
                 <LinearGradient colors={['rgba(99,102,241,0.2)', 'rgba(139,92,246,0.2)']} style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
                   <Ionicons name="people-outline" size={40} color={theme.colors.primary} />
                 </LinearGradient>
@@ -264,11 +264,11 @@ export default function SquadScreen() {
               <FlatList
                 data={squads}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{ gap: 16, paddingBottom: 100, paddingTop: 24, paddingHorizontal: 24 }}
+                contentContainerStyle={{ gap: 12, paddingBottom: 60, paddingTop: 24, paddingHorizontal: 24 }}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleSelectSquad(item.id)} activeOpacity={0.7}>
                     <Card variant="glass" style={s.squadCard}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                         {item.imageUrl ? (
                           <Image source={{ uri: item.imageUrl }} style={{ width: 56, height: 56, borderRadius: 12 }} />
                         ) : (
@@ -304,7 +304,7 @@ export default function SquadScreen() {
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
   backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
-  pageHeader: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, marginBottom: 24, letterSpacing: -1, paddingHorizontal: 24, paddingTop: 16 },
+  pageHeader: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, marginBottom: 16, letterSpacing: -1, paddingHorizontal: 24, paddingTop: 16 },
   title: { color: theme.colors.text, fontSize: 24, fontWeight: '900' as const, flex: 1, letterSpacing: -0.5 },
   tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder, paddingHorizontal: 24 },
   tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
@@ -313,20 +313,20 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   activeTabText: { color: theme.colors.primary, fontWeight: '800' as const },
   inputLabel: { color: theme.colors.textSecondary, fontSize: 14, fontWeight: '700' as const, marginBottom: 8 },
   input: { backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 16, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.glassBorder, fontSize: 16 },
-  squadDetailCard: { padding: 24, marginBottom: 24, borderWidth: 1, borderColor: theme.colors.glassBorder, borderRadius: theme.borderRadius.xl },
+  squadDetailCard: { paddingHorizontal: 24, paddingVertical: 16, marginBottom: 16, borderWidth: 1, borderColor: theme.colors.glassBorder, borderRadius: theme.borderRadius.xl },
   codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, backgroundColor: 'rgba(99,102,241,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, alignSelf: 'flex-start' as const },
   squadCode: { color: theme.colors.primary, fontSize: 16, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 2 },
-  squadCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderWidth: 1, borderColor: theme.colors.glassBorder },
+  squadCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: theme.colors.glassBorder },
   squadName: { color: theme.colors.text, fontSize: 18, fontWeight: '800' as const, letterSpacing: -0.5 },
   codeTag: { backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.glassBorder },
   squadCodeSmall: { color: theme.colors.textMuted, fontSize: 12, fontFamily: 'monospace', fontWeight: '700' as const },
   memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderWidth: 1, borderColor: 'rgba(99, 102, 241, 0.2)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20 },
   memberCount: { color: theme.colors.primary, fontWeight: '800' as const, fontSize: 14 },
   membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl, borderWidth: 1, borderColor: theme.colors.glassBorder, overflow: 'hidden' as const },
-  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder },
+  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder },
   scorePill: { backgroundColor: 'rgba(139, 92, 246, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   iconBox: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.glassBorder },
   dividerText: { color: theme.colors.textMuted, fontSize: 14, fontWeight: '700' as const }
 });

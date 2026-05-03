@@ -103,13 +103,13 @@ export default function PrivacyScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 24, paddingBottom: 16, gap: 16 },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, paddingVertical: 16, paddingBottom: 16, gap: 12 },
   backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
   title: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, letterSpacing: -0.5 },
-  scroll: { padding: 24, gap: 16 },
+  scroll: { paddingHorizontal: 24, paddingVertical: 16, gap: 12 },
   sectionTitle: { color: theme.colors.text, fontSize: 16, fontWeight: '800' as const, marginBottom: 8 },
   settingsCard: { padding: 0, overflow: 'hidden' as const, borderWidth: 1, borderColor: theme.colors.glassBorder },
-  settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16 },
+  settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   settingLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1, paddingRight: 16 },
   settingIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   settingText: { color: theme.colors.text, fontSize: 16, fontWeight: '600' as const, marginBottom: 2 },

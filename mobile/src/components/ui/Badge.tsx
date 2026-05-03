@@ -43,7 +43,7 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   bg_warning: { backgroundColor: `${theme.colors.warning}20` },
   bg_danger: { backgroundColor: `${theme.colors.danger}20` },
   size_sm: { paddingHorizontal: 8, paddingVertical: 4 },
-  size_md: { paddingHorizontal: 12, paddingVertical: 6 },
+  size_md: { paddingHorizontal: 16, paddingVertical: 6 },
   icon: { fontSize: 12 },
   text: { color: theme.colors.text, fontWeight: '600' as const },
   size_text_sm: { fontSize: 11 },

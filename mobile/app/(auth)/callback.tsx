@@ -76,6 +76,6 @@ export default function AuthCallbackScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background, alignItems: 'center', justifyContent: 'center', gap: 16 },
+  container: { flex: 1, backgroundColor: theme.colors.background, alignItems: 'center', justifyContent: 'center', gap: 12 },
   text: { color: theme.colors.textSecondary, fontSize: 16 },
 });
