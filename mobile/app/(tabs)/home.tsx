@@ -119,8 +119,12 @@ export default function HomeScreen() {
                       <Ionicons name="git-commit-outline" size={20} color={theme.colors.text} />
                     </View>
                     <View>
-                      <Text style={s.activityTitle}>Commit Pushed</Text>
-                      <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0, 7)}</Text>
+                      <Text style={s.activityTitle}>
+                        Commit Pushed {score.repositoryName ? `- ${score.repositoryName.split('/').pop()}` : ''}
+                      </Text>
+                      <Text style={s.activitySub}>
+                        {new Date(score.scoredAt).toLocaleDateString()} {score.commitHash ? `• ${score.commitHash.substring(0, 7)}` : ''}
+                      </Text>
                     </View>
                   </View>
                   <View style={s.pointsPill}>

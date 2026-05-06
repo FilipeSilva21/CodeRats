@@ -8,7 +8,7 @@ interface ScoringState {
   currentStreak: number;
   bestStreak: number;
   streakBonus: number | null;
-  recentScores: { points: number; scoredAt: string; commitHash: string | null }[];
+  recentScores: { points: number; scoredAt: string; commitHash: string | null; repositoryName: string | null }[];
   isLoading: boolean;
   fetchScoreSummary: () => Promise<void>;
   fetchDailyProgress: () => Promise<void>;
@@ -17,7 +17,7 @@ interface ScoringState {
 export const useScoringStore = create<ScoringState>((set, get) => ({
   totalScore: 0,
   todayScore: 0,
-  dailyCap: 1000,
+  dailyCap: 50,
   currentStreak: 0,
   bestStreak: 0,
   streakBonus: null,

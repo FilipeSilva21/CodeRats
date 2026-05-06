@@ -1,0 +1,106 @@
+package com.devrats.service;
+
+import com.devrats.model.RefreshToken;
+import com.devrats.model.User;
+import com.devrats.repository.RefreshTokenRepository;
+import com.devrats.repository.UserRepository;
+import com.devrats.security.JwtProvider;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+
+@Service
+public class AuthService {
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
+
+    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider) {
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtProvider = jwtProvider;
+    }
+
+    @Transactional
+    public AuthResponse findOrCreateUser(String githubId, String username, String displayName, String avatarUrl, String email) {
+        User user = userRepository.findByGithubId(githubId);
+        if (user == null) {
+            user = new User();
+            user.setId(UUID.randomUUID().toString());
+            user.setGithubId(githubId);
+            user.setUsername(username);
+            user.setDisplayName(displayName);
+            user.setAvatarUrl(avatarUrl);
+            user.setEmail(email);
+            user = userRepository.save(user);
+        }
+
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+
+        RefreshToken rt = new RefreshToken();
+        rt.setId(UUID.randomUUID().toString());
+        rt.setUserId(user.getId());
+        rt.setToken(refreshToken);
+        rt.setExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS));
+        refreshTokenRepository.save(rt);
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                new UserProfile(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getDisplayName(),
+                        user.getAvatarUrl(),
+                        user.getTotalScore(),
+                        user.getEffectiveStreak(),
+                        user.getBestStreak(),
+                        user.getLeague()
+                )
+        );
+    }
+
+    @Transactional
+    public TokenRefreshResponse refreshAccessToken(String token) {
+        RefreshToken stored = refreshTokenRepository.findByToken(token);
+        if (stored == null || stored.getExpiresAt().isBefore(Instant.now())) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+        String userId = stored.getUserId();
+        refreshTokenRepository.delete(stored);
+
+        String newAccess = jwtProvider.generateAccessToken(userId);
+        String newRefresh = jwtProvider.generateRefreshToken(userId);
+
+        RefreshToken rt = new RefreshToken();
+        rt.setId(UUID.randomUUID().toString());
+        rt.setUserId(userId);
+        rt.setToken(newRefresh);
+        rt.setExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS));
+        refreshTokenRepository.save(rt);
+
+        return new TokenRefreshResponse(newAccess, newRefresh);
+    }
+
+    public UserProfile getProfile(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return new UserProfile(
+                user.getId(),
+                user.getUsername(),
+                user.getDisplayName(),
+                user.getAvatarUrl(),
+                user.getTotalScore(),
+                user.getEffectiveStreak(),
+                user.getBestStreak(),
+                user.getLeague()
+        );
+    }
+
+    public record AuthResponse(String accessToken, String refreshToken, UserProfile user) {}
+    public record TokenRefreshResponse(String accessToken, String refreshToken) {}
+    public record UserProfile(String id, String username, String displayName, String avatarUrl, Integer totalScore, Integer currentStreak, Integer bestStreak, String league) {}
+}
