@@ -11,7 +11,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class ScoringService(private val repo: ScoringRepository, private val connectionManager: ConnectionManager) {
+import com.devrats.features.notification.NotificationService
+
+class ScoringService(
+    private val repo: ScoringRepository,
+    private val connectionManager: ConnectionManager,
+    private val notificationService: NotificationService
+) {
     private val logger = LoggerFactory.getLogger(ScoringService::class.java)
     private val dailyCap = 200
 
@@ -56,9 +62,11 @@ class ScoringService(private val repo: ScoringRepository, private val connection
                 .where { com.devrats.features.auth.models.Users.id eq userId }
                 .singleOrNull()?.get(com.devrats.features.auth.models.Users.totalScore) ?: 0
         }
+        val oldScore = totalScore - points
 
         GlobalScope.launch {
             connectionManager.broadcastScoreUpdate(userId, totalScore, points)
+            notificationService.checkAndSendSurpassNotifications(userId, oldScore, totalScore)
         }
     }
 }

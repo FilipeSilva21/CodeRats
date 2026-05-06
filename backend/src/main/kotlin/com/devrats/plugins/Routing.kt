@@ -6,6 +6,7 @@ import com.devrats.features.scoring.scoringRoutes
 import com.devrats.features.squad.squadRoutes
 import com.devrats.features.leaderboard.leaderboardRoutes
 import com.devrats.features.leaderboard.leaderboardWebSocket
+import com.devrats.features.notification.notificationRoutes
 import com.devrats.shared.exceptions.AppException
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
@@ -27,12 +28,13 @@ fun Application.configureRouting() {
         get("/api/health") {
             call.respond(HttpStatusCode.OK, mapOf("status" to "ok", "service" to "devrats-api"))
         }
-    }
 
-    authRoutes()
-    webhookRoutes()
-    scoringRoutes()
-    squadRoutes()
-    leaderboardRoutes()
-    leaderboardWebSocket()
+        authRoutes()
+        webhookRoutes()
+        scoringRoutes()
+        squadRoutes()
+        leaderboardRoutes()
+        leaderboardWebSocket()
+        notificationRoutes()
+    }
 }

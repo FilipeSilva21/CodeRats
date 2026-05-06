@@ -1,6 +1,7 @@
 package com.devrats.features.leaderboard
 
 import com.devrats.features.auth.models.Users
+import com.devrats.features.auth.models.getEffectiveStreak
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -33,7 +34,7 @@ class LeaderboardService {
                 displayName = row[Users.displayName],
                 avatarUrl = row[Users.avatarUrl],
                 totalScore = row[Users.totalScore],
-                currentStreak = row[Users.currentStreak],
+                currentStreak = row.getEffectiveStreak(),
                 league = row[Users.league]
             )
         }

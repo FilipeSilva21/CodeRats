@@ -1,6 +1,7 @@
 package com.devrats.features.scoring
 
 import com.devrats.features.auth.models.Users
+import com.devrats.features.auth.models.getEffectiveStreak
 import com.devrats.features.scoring.models.RecentScoreResponse
 import com.devrats.features.scoring.models.ScoreSummaryResponse
 import com.devrats.features.scoring.models.DailyScoreResponse
@@ -37,7 +38,7 @@ fun Application.scoringRoutes() {
                         recentScores = recent, 
                         totalScore = user?.get(Users.totalScore) ?: 0, 
                         todayScore = todayScore,
-                        currentStreak = user?.get(Users.currentStreak) ?: 0, 
+                        currentStreak = user?.getEffectiveStreak() ?: 0, 
                         bestStreak = user?.get(Users.bestStreak) ?: 0, 
                         streakBonus = 0
                     ))

@@ -27,3 +27,15 @@ object RefreshTokens : Table("refresh_tokens") {
     val createdAt = timestamp("created_at").defaultExpression(org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp)
     override val primaryKey = PrimaryKey(id)
 }
+
+fun org.jetbrains.exposed.sql.ResultRow.getEffectiveStreak(): Int {
+    val currentStreak = this[Users.currentStreak]
+    if (currentStreak == 0) return 0
+    val lastCommit = this[Users.lastCommitDate] ?: return 0
+    
+    val today = java.time.LocalDate.now()
+    val lastDate = java.time.LocalDate.parse(lastCommit)
+    val daysBetween = java.time.temporal.ChronoUnit.DAYS.between(lastDate, today)
+    
+    return if (daysBetween <= 1) currentStreak else 0
+}

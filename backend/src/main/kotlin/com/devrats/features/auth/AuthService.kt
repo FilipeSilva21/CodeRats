@@ -4,6 +4,7 @@ import com.devrats.features.auth.models.Users
 import com.devrats.features.auth.models.AuthResponse
 import com.devrats.features.auth.models.UserProfile
 import com.devrats.features.auth.models.TokenRefreshResponse
+import com.devrats.features.auth.models.getEffectiveStreak
 import com.devrats.shared.security.JwtProvider
 import com.devrats.shared.exceptions.UnauthorizedException
 import kotlinx.datetime.Clock
@@ -28,7 +29,7 @@ class AuthService(private val repo: AuthRepository, private val jwt: JwtProvider
                 displayName = user[Users.displayName], 
                 avatarUrl = user[Users.avatarUrl],
                 totalScore = user[Users.totalScore], 
-                currentStreak = user[Users.currentStreak], 
+                currentStreak = user.getEffectiveStreak(), 
                 bestStreak = user[Users.bestStreak],
                 league = user[Users.league]
             )
@@ -54,7 +55,7 @@ class AuthService(private val repo: AuthRepository, private val jwt: JwtProvider
             displayName = user[Users.displayName], 
             avatarUrl = user[Users.avatarUrl],
             totalScore = user[Users.totalScore], 
-            currentStreak = user[Users.currentStreak], 
+            currentStreak = user.getEffectiveStreak(), 
             bestStreak = user[Users.bestStreak],
             league = user[Users.league]
         )

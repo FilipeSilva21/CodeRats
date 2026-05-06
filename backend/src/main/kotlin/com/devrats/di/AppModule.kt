@@ -5,6 +5,8 @@ import com.devrats.features.auth.AuthService
 import com.devrats.features.github.GitHubApiClient
 import com.devrats.features.github.WebhookService
 import com.devrats.features.leaderboard.LeaderboardService
+import com.devrats.features.notification.NotificationRepository
+import com.devrats.features.notification.NotificationService
 import com.devrats.features.scoring.ScoringRepository
 import com.devrats.features.scoring.ScoringService
 import com.devrats.features.squad.SquadRepository
@@ -25,8 +27,10 @@ fun appModule(environment: ApplicationEnvironment) = module {
     single { AuthRepository() }
     single { AuthService(get(), get()) }
     single { com.devrats.shared.websocket.ConnectionManager() }
+    single { NotificationRepository() }
+    single { NotificationService(get()) }
     single { ScoringRepository() }
-    single { ScoringService(get(), get()) }
+    single { ScoringService(get(), get(), get()) }
     single { WebhookService(get()) }
     single { SquadRepository() }
     single { SquadService(get()) }
