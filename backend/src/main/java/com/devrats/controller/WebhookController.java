@@ -34,7 +34,7 @@ public class WebhookController {
             @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
             @RequestHeader(value = "X-GitHub-Event", required = false) String event) {
 
-        logger.info("Received GitHub Webhook Event: {}", event);
+        logger.info("Received GitHub Webhook Event: {}. Body length: {} bytes", event, rawBody != null ? rawBody.length : 0);
 
         if (signature == null || !hmacValidator.isValid(rawBody, signature)) {
             logger.warn("Webhook signature validation failed! Signature header: {}", signature);
