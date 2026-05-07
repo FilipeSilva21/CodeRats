@@ -34,7 +34,10 @@ public class WebhookController {
             @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
             @RequestHeader(value = "X-GitHub-Event", required = false) String event) {
 
+        logger.info("Received GitHub Webhook Event: {}", event);
+
         if (signature == null || !hmacValidator.isValid(body.getBytes(StandardCharsets.UTF_8), signature)) {
+            logger.warn("Webhook signature validation failed! Signature header: {}", signature);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature");
         }
 
@@ -58,6 +61,7 @@ public class WebhookController {
             case "ping":
                 return ResponseEntity.ok(Map.of("status", "pong"));
             default:
+                logger.info("Ignoring unhandled event type: {}", event);
                 return ResponseEntity.ok(Map.of("status", "ignored"));
         }
     }

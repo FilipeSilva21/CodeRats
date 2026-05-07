@@ -31,7 +31,6 @@ export default function HomeScreen() {
     }
   });
 
-  //teste
   const progressPercent = Math.min((todayScore / dailyCap) * 100, 100) || 0;
 
   return (
