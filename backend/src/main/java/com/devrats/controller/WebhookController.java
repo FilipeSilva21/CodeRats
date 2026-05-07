@@ -30,24 +30,24 @@ public class WebhookController {
 
     @PostMapping("/github")
     public ResponseEntity<?> handleGithubWebhook(
-            @RequestBody byte[] rawBody,
+            jakarta.servlet.http.HttpServletRequest request,
             @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
             @RequestHeader(value = "X-GitHub-Event", required = false) String event) {
 
-        logger.info("Received GitHub Webhook Event: {}. Body length: {} bytes", event, rawBody != null ? rawBody.length : 0);
+        try {
+            byte[] rawBody = request.getInputStream().readAllBytes();
+            logger.info("Received GitHub Webhook Event: {}. Body length: {} bytes", event, rawBody.length);
 
-        if (signature == null || !hmacValidator.isValid(rawBody, signature)) {
-            logger.warn("Webhook signature validation failed! Signature header: {}", signature);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature");
-        }
+            if (signature == null || !hmacValidator.isValid(rawBody, signature)) {
+                logger.warn("Webhook signature validation failed! Signature header: {}", signature);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature");
+            }
 
-        String body = new String(rawBody, StandardCharsets.UTF_8);
+            String body = new String(rawBody, StandardCharsets.UTF_8);
+            if (event == null) event = "";
 
-        if (event == null) event = "";
-
-        switch (event) {
-            case "push":
-                try {
+            switch (event) {
+                case "push":
                     String jsonString = body;
                     if (body.startsWith("payload=")) {
                         String encoded = body.substring(8);
@@ -56,15 +56,15 @@ public class WebhookController {
                     WebhookPayload payload = objectMapper.readValue(jsonString, WebhookPayload.class);
                     webhookService.processPushEvent(payload);
                     return ResponseEntity.ok(Map.of("status", "processed"));
-                } catch (Exception e) {
-                    logger.error("Failed to parse webhook payload", e);
-                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid payload format"));
-                }
-            case "ping":
-                return ResponseEntity.ok(Map.of("status", "pong"));
-            default:
-                logger.info("Ignoring unhandled event type: {}", event);
-                return ResponseEntity.ok(Map.of("status", "ignored"));
+                case "ping":
+                    return ResponseEntity.ok(Map.of("status", "pong"));
+                default:
+                    logger.info("Ignoring unhandled event type: {}", event);
+                    return ResponseEntity.ok(Map.of("status", "ignored"));
+            }
+        } catch (Exception e) {
+            logger.error("Failed to process webhook", e);
+            return ResponseEntity.badRequest().body(Map.of("error", "Processing failed"));
         }
     }
 }
