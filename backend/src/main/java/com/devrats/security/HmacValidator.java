@@ -18,6 +18,7 @@ public class HmacValidator {
 
     public boolean isValid(byte[] payload, String signatureHeader) {
         if (signatureHeader == null || !signatureHeader.startsWith("sha256=")) {
+            System.out.println("[DEBUG HMAC] Signature header is null or doesn't start with sha256=");
             return false;
         }
 
@@ -28,8 +29,17 @@ public class HmacValidator {
             mac.init(secretKeySpec);
             byte[] hmacBytes = mac.doFinal(payload);
             String computedSignature = bytesToHex(hmacBytes);
-            return computedSignature.equals(signature);
+            
+            if (!computedSignature.equals(signature)) {
+                System.out.println("[DEBUG HMAC] Validation FAILED.");
+                System.out.println("[DEBUG HMAC] GitHub sent: " + signature);
+                System.out.println("[DEBUG HMAC] We computed: " + computedSignature);
+                System.out.println("[DEBUG HMAC] Using secret: '" + secret + "' (length: " + secret.length() + ")");
+                return false;
+            }
+            return true;
         } catch (Exception e) {
+            System.out.println("[DEBUG HMAC] Exception during validation: " + e.getMessage());
             return false;
         }
     }
