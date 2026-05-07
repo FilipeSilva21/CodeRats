@@ -1,36 +1,52 @@
 package com.devrats.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record WebhookPayload(
-        String ref,
-        List<CommitData> commits,
-        SenderData sender,
-        RepoData repository,
-        InstallationRef installation
+        @JsonProperty("ref") String ref,
+        @JsonProperty("commits") List<CommitData> commits,
+        @JsonProperty("sender") SenderData sender,
+        @JsonProperty("repository") RepoData repository,
+        @JsonProperty("installation") InstallationRef installation
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record CommitData(
-            String id,
-            String message,
-            String timestamp,
-            AuthorData author,
-            List<String> added,
-            List<String> removed,
-            List<String> modified
+            @JsonProperty("id") String id,
+            @JsonProperty("message") String message,
+            @JsonProperty("timestamp") String timestamp,
+            @JsonProperty("author") AuthorData author,
+            @JsonProperty("added") List<String> added,
+            @JsonProperty("removed") List<String> removed,
+            @JsonProperty("modified") List<String> modified
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record AuthorData(String name, String email, String username) {}
+    public record AuthorData(
+            @JsonProperty("name") String name, 
+            @JsonProperty("email") String email, 
+            @JsonProperty("username") String username
+    ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record SenderData(Long id, String login, String avatar_url) {}
+    public record SenderData(
+            @JsonProperty("id") Long id, 
+            @JsonProperty("login") String login, 
+            @JsonProperty("avatar_url") String avatar_url
+    ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record RepoData(Long id, String name, String full_name, Boolean private_repo) {}
+    public record RepoData(
+            @JsonProperty("id") Long id, 
+            @JsonProperty("name") String name, 
+            @JsonProperty("full_name") String full_name, 
+            @JsonProperty("private") Boolean private_repo
+    ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record InstallationRef(Long id) {}
+    public record InstallationRef(
+            @JsonProperty("id") Long id
+    ) {}
 }
