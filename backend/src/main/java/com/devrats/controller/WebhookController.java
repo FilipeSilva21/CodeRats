@@ -30,16 +30,18 @@ public class WebhookController {
 
     @PostMapping("/github")
     public ResponseEntity<?> handleGithubWebhook(
-            @RequestBody String body,
+            @RequestBody byte[] rawBody,
             @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
             @RequestHeader(value = "X-GitHub-Event", required = false) String event) {
 
         logger.info("Received GitHub Webhook Event: {}", event);
 
-        if (signature == null || !hmacValidator.isValid(body.getBytes(StandardCharsets.UTF_8), signature)) {
+        if (signature == null || !hmacValidator.isValid(rawBody, signature)) {
             logger.warn("Webhook signature validation failed! Signature header: {}", signature);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature");
         }
+
+        String body = new String(rawBody, StandardCharsets.UTF_8);
 
         if (event == null) event = "";
 
