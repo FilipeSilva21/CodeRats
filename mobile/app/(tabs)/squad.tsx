@@ -92,9 +92,8 @@ export default function SquadScreen() {
 
     return (
       <View style={s.c}>
-        <LinearGradient colors={['rgba(99, 102, 241, 0.1)', 'transparent']} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 12, paddingHorizontal: 24, paddingTop: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24, gap: 12, paddingHorizontal: 24, paddingTop: 16 }}>
             <TouchableOpacity onPress={clearCurrentSquad} style={s.backBtn}>
               <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
             </TouchableOpacity>
@@ -102,7 +101,7 @@ export default function SquadScreen() {
           </View>
 
           {editMode ? (
-            <ScrollView contentContainerStyle={{ gap: 12, paddingHorizontal: 24 }}>
+            <ScrollView contentContainerStyle={{ gap: 16, paddingHorizontal: 24 }}>
               <View>
                 <Text style={s.inputLabel}>Squad Name</Text>
                 <TextInput style={s.input} value={editName} onChangeText={setEditName} placeholder="Name" placeholderTextColor={theme.colors.textMuted} />
@@ -122,29 +121,29 @@ export default function SquadScreen() {
             </ScrollView>
           ) : (
             <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60 }}>
-              <Card variant="glass" style={s.squadDetailCard}>
-                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+              <Card style={s.squadDetailCard}>
+                <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center', marginBottom: 20 }}>
                   {currentSquad.imageUrl ? (
-                    <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 72, height: 72, borderRadius: 16 }} />
+                    <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 80, height: 80, borderRadius: theme.borderRadius.md }} />
                   ) : (
-                    <LinearGradient colors={['rgba(99,102,241,0.2)', 'rgba(139,92,246,0.2)']} style={{ width: 72, height: 72, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder }}>
-                      <Ionicons name="people" size={32} color={theme.colors.primary} />
-                    </LinearGradient>
+                    <View style={{ width: 80, height: 80, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }}>
+                      <Ionicons name="people" size={32} color={theme.colors.textMuted} />
+                    </View>
                   )}
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Invite Code</Text>
+                    <Text style={{ color: theme.colors.textMuted, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 }}>Invite Code</Text>
                     <View style={s.codeContainer}>
                       <Text style={s.squadCode}>{currentSquad.inviteCode}</Text>
-                      <Ionicons name="copy-outline" size={16} color={theme.colors.primary} />
+                      <Ionicons name="copy-outline" size={14} color={theme.colors.accent} />
                     </View>
                   </View>
                 </View>
-                <Text style={{ color: theme.colors.text, fontSize: 15, lineHeight: 24 }}>
+                <Text style={{ color: theme.colors.textSecondary, fontSize: 15, lineHeight: 24 }}>
                   {currentSquad.description || 'No description provided for this squad.'}
                 </Text>
               </Card>
 
-              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32 }}>
                 {isOwner ? (
                   <Button title="Edit Squad" onPress={() => {
                     setEditName(currentSquad.name);
@@ -153,28 +152,33 @@ export default function SquadScreen() {
                     setEditMode(true);
                   }} variant="secondary" style={{ flex: 1 }} icon={<Ionicons name="pencil" size={16} color={theme.colors.text} />} />
                 ) : (
-                  <Button title="Leave Squad" onPress={handleLeave} variant="secondary" style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)' }} icon={<Ionicons name="exit" size={16} color={theme.colors.danger} />} />
+                  <Button title="Leave Squad" onPress={handleLeave} variant="secondary" style={{ flex: 1 }} icon={<Ionicons name="exit" size={16} color={theme.colors.danger} />} />
                 )}
               </View>
 
-              <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', marginBottom: 16, letterSpacing: -0.5 }}>
-                Members ({currentSquad.memberCount}/{currentSquad.maxMembers})
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.5 }}>
+                  Members
+                </Text>
+                <Text style={{ color: theme.colors.accent, fontSize: 14, fontWeight: '700' }}>
+                  {currentSquad.memberCount} / {currentSquad.maxMembers}
+                </Text>
+              </View>
               
               <View style={s.membersList}>
                 {members.map((item, index) => (
                   <View key={item.userId} style={[s.memberRow, index === members.length - 1 && { borderBottomWidth: 0 }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                      {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} /> : <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface }} />}
+                      {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} /> : <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }} />}
                       <View>
                         <Text style={{ color: theme.colors.text, fontWeight: '700', fontSize: 16 }}>{item.displayName}</Text>
-                        <Text style={{ color: theme.colors.textMuted, fontSize: 13, marginTop: 2, textTransform: 'capitalize' }}>
-                          {item.role} {item.userId === currentSquad.ownerId && '• Owner'}
+                        <Text style={{ color: theme.colors.textMuted, fontSize: 13, marginTop: 2 }}>
+                          {item.role === 'owner' ? 'Owner' : 'Member'}
                         </Text>
                       </View>
                     </View>
                     <View style={s.scorePill}>
-                      <Text style={{ color: theme.colors.accent, fontWeight: '800', fontSize: 15 }}>{item.totalScore.toLocaleString()}</Text>
+                      <Text style={{ color: theme.colors.text, fontWeight: '800', fontSize: 15 }}>{item.totalScore.toLocaleString()}</Text>
                     </View>
                   </View>
                 ))}
@@ -188,7 +192,6 @@ export default function SquadScreen() {
 
   return (
     <View style={s.c}>
-      <LinearGradient colors={['rgba(99, 102, 241, 0.1)', 'transparent']} style={StyleSheet.absoluteFill} />
       <SafeAreaView style={{ flex: 1 }}>
         <Text style={s.pageHeader}>Squads</Text>
         
@@ -202,13 +205,11 @@ export default function SquadScreen() {
         </View>
 
         {activeTab === 'add_squad' ? (
-          <ScrollView style={{ marginTop: 24 }} contentContainerStyle={{ gap: 32, paddingHorizontal: 24 }}>
-            <Card variant="glass" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <View style={[s.iconBox, { backgroundColor: 'rgba(99, 102, 241, 0.15)' }]}>
-                  <Ionicons name="add" size={24} color={theme.colors.primary} />
-                </View>
-                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.5 }}>Create Squad</Text>
+          <ScrollView style={{ marginTop: 24 }} contentContainerStyle={{ gap: 24, paddingHorizontal: 24 }}>
+            <Card style={{ padding: 24 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <Ionicons name="add-circle-outline" size={24} color={theme.colors.accent} />
+                <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '800' }}>Create Squad</Text>
               </View>
               <TextInput 
                 style={s.input} 
@@ -226,12 +227,10 @@ export default function SquadScreen() {
               <View style={s.dividerLine} />
             </View>
 
-            <Card variant="glass" style={{ paddingHorizontal: 24, paddingVertical: 16 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <View style={[s.iconBox, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
-                  <Ionicons name="enter-outline" size={24} color={theme.colors.accent} />
-                </View>
-                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.5 }}>Join Squad</Text>
+            <Card style={{ padding: 24 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <Ionicons name="enter-outline" size={24} color={theme.colors.accent} />
+                <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '800' }}>Join Squad</Text>
               </View>
               <TextInput 
                 style={s.input} 
@@ -248,17 +247,17 @@ export default function SquadScreen() {
         ) : (
           <>
             {isLoading && squads.length === 0 ? (
-              <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 40 }} />
+              <ActivityIndicator size="large" color={theme.colors.accent} style={{ marginTop: 40 }} />
             ) : squads.length === 0 ? (
-              <View style={{ alignItems: 'center', gap: 12, paddingVertical: 64, paddingHorizontal: 24 }}>
-                <LinearGradient colors={['rgba(99,102,241,0.2)', 'rgba(139,92,246,0.2)']} style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
-                  <Ionicons name="people-outline" size={40} color={theme.colors.primary} />
-                </LinearGradient>
-                <Text style={{ color: theme.colors.text, fontSize: 22, fontWeight: '800' }}>No squads yet</Text>
-                <Text style={{ color: theme.colors.textSecondary, fontSize: 16, textAlign: 'center', lineHeight: 24 }}>
+              <View style={{ alignItems: 'center', gap: 16, paddingVertical: 80, paddingHorizontal: 40 }}>
+                <View style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border }}>
+                  <Ionicons name="people-outline" size={32} color={theme.colors.textMuted} />
+                </View>
+                <Text style={{ color: theme.colors.text, fontSize: 20, fontWeight: '800', textAlign: 'center' }}>No squads yet</Text>
+                <Text style={{ color: theme.colors.textSecondary, fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
                   You are not competing in any squads. Create a new one or join with a code!
                 </Text>
-                <Button title="Find a Squad" onPress={() => setActiveTab('add_squad')} variant="primary" size="md" style={{ marginTop: 16, paddingHorizontal: 32 }} />
+                <Button title="Find a Squad" onPress={() => setActiveTab('add_squad')} variant="primary" style={{ marginTop: 8 }} />
               </View>
             ) : (
               <FlatList
@@ -267,26 +266,22 @@ export default function SquadScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 60, paddingTop: 24, paddingHorizontal: 24 }}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleSelectSquad(item.id)} activeOpacity={0.7}>
-                    <Card variant="glass" style={s.squadCard}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Card style={s.squadCard}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, flex: 1 }}>
                         {item.imageUrl ? (
-                          <Image source={{ uri: item.imageUrl }} style={{ width: 56, height: 56, borderRadius: 12 }} />
+                          <Image source={{ uri: item.imageUrl }} style={{ width: 48, height: 48, borderRadius: theme.borderRadius.md }} />
                         ) : (
-                          <LinearGradient colors={['rgba(99,102,241,0.15)', 'rgba(139,92,246,0.15)']} style={{ width: 56, height: 56, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder }}>
-                            <Ionicons name="people" size={24} color={theme.colors.primary} />
-                          </LinearGradient>
+                          <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }}>
+                            <Ionicons name="people" size={20} color={theme.colors.textMuted} />
+                          </View>
                         )}
                         <View style={{ flex: 1 }}>
                           <Text style={s.squadName}>{item.name}</Text>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 8 }}>
-                            <View style={s.codeTag}>
-                              <Text style={s.squadCodeSmall}>{item.inviteCode}</Text>
-                            </View>
-                          </View>
+                          <Text style={s.squadCodeSmall}>{item.inviteCode}</Text>
                         </View>
                       </View>
                       <View style={s.memberBadge}>
-                        <Ionicons name="people" size={14} color={theme.colors.primary} />
+                        <Ionicons name="person" size={12} color={theme.colors.textMuted} />
                         <Text style={s.memberCount}>{item.memberCount}/{item.maxMembers}</Text>
                       </View>
                     </Card>
@@ -303,30 +298,28 @@ export default function SquadScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
-  pageHeader: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, marginBottom: 16, letterSpacing: -1, paddingHorizontal: 24, paddingTop: 16 },
-  title: { color: theme.colors.text, fontSize: 24, fontWeight: '900' as const, flex: 1, letterSpacing: -0.5 },
-  tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder, paddingHorizontal: 24 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border },
+  pageHeader: { color: theme.colors.text, fontSize: 32, fontWeight: '800' as const, marginBottom: 8, letterSpacing: -1, paddingHorizontal: theme.spacing.xl, paddingTop: 16 },
+  title: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, flex: 1, letterSpacing: -0.5 },
+  tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.border, paddingHorizontal: theme.spacing.xl },
   tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
-  activeTab: { borderBottomWidth: 2, borderBottomColor: theme.colors.primary },
-  tabText: { color: theme.colors.textMuted, fontSize: 16, fontWeight: '600' as const },
-  activeTabText: { color: theme.colors.primary, fontWeight: '800' as const },
-  inputLabel: { color: theme.colors.textSecondary, fontSize: 14, fontWeight: '700' as const, marginBottom: 8 },
-  input: { backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 16, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.glassBorder, fontSize: 16 },
-  squadDetailCard: { paddingHorizontal: 24, paddingVertical: 16, marginBottom: 16, borderWidth: 1, borderColor: theme.colors.glassBorder, borderRadius: theme.borderRadius.xl },
-  codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, backgroundColor: 'rgba(99,102,241,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, alignSelf: 'flex-start' as const },
-  squadCode: { color: theme.colors.primary, fontSize: 16, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 2 },
-  squadCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: theme.colors.glassBorder },
-  squadName: { color: theme.colors.text, fontSize: 18, fontWeight: '800' as const, letterSpacing: -0.5 },
-  codeTag: { backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.glassBorder },
-  squadCodeSmall: { color: theme.colors.textMuted, fontSize: 12, fontFamily: 'monospace', fontWeight: '700' as const },
-  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderWidth: 1, borderColor: 'rgba(99, 102, 241, 0.2)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20 },
-  memberCount: { color: theme.colors.primary, fontWeight: '800' as const, fontSize: 14 },
-  membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.xl, borderWidth: 1, borderColor: theme.colors.glassBorder, overflow: 'hidden' as const },
-  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.colors.glassBorder },
-  scorePill: { backgroundColor: 'rgba(139, 92, 246, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  iconBox: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.glassBorder },
-  dividerText: { color: theme.colors.textMuted, fontSize: 14, fontWeight: '700' as const }
+  activeTab: { borderBottomWidth: 2, borderBottomColor: theme.colors.accent },
+  tabText: { color: theme.colors.textMuted, fontSize: 15, fontWeight: '600' as const },
+  activeTabText: { color: theme.colors.accent, fontWeight: '700' as const },
+  inputLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700' as const, marginBottom: 8, textTransform: 'uppercase' as const, letterSpacing: 0.5 },
+  input: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, paddingHorizontal: 16, paddingVertical: 14, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, fontSize: 16 },
+  squadDetailCard: { padding: 20, marginBottom: 16 },
+  codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, backgroundColor: theme.colors.background, paddingHorizontal: 10, paddingVertical: 6, borderRadius: theme.borderRadius.sm, alignSelf: 'flex-start' as const, borderWidth: 1, borderColor: theme.colors.border },
+  squadCode: { color: theme.colors.accent, fontSize: 16, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 2 },
+  squadCard: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  squadName: { color: theme.colors.text, fontSize: 17, fontWeight: '700' as const, marginBottom: 2 },
+  squadCodeSmall: { color: theme.colors.textMuted, fontSize: 12, fontFamily: 'monospace', fontWeight: '600' as const },
+  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 12, borderLeftWidth: 1, borderLeftColor: theme.colors.border },
+  memberCount: { color: theme.colors.text, fontWeight: '700' as const, fontSize: 13 },
+  membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' as const },
+  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+  scorePill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border },
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 8 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.border },
+  dividerText: { color: theme.colors.textMuted, fontSize: 12, fontWeight: '800' as const }
 });

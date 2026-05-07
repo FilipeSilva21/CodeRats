@@ -87,7 +87,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String userId = (String) authentication.getPrincipal();
-        return ResponseEntity.ok(authService.getProfile(userId));
+        AuthService.UserProfile profile = authService.getProfile(userId);
+        if (profile == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(profile);
     }
 
     @DeleteMapping("/logout")

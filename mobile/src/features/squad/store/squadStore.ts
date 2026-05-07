@@ -7,12 +7,12 @@ interface SquadState { squads: Squad[]; currentSquad: Squad | null; members: Squ
 
 export const useSquadStore = create<SquadState>((set, get) => ({
   squads: [], currentSquad: null, members: [], isLoading: false, error: null,
-  fetchMySquads: async () => { set({ isLoading: true }); try { const { data } = await api.get('/squads/my'); set({ squads: data, isLoading: false }); } catch (e: any) { set({ error: e.message, isLoading: false }); } },
+  fetchMySquads: async () => { set({ isLoading: true }); try { const { data } = await api.get('/squads/me'); set({ squads: data, isLoading: false }); } catch (e: any) { set({ error: e.message, isLoading: false }); } },
   fetchSquadDetails: async (id) => { set({ isLoading: true }); try { const { data } = await api.get(`/squads/${id}`); set({ currentSquad: data.squad, members: data.members, isLoading: false }); } catch (e: any) { set({ error: e.message, isLoading: false }); } },
   createSquad: async (name) => { const { data } = await api.post('/squads', { name }); set((s) => ({ squads: [...s.squads, data] })); return data; },
   joinSquad: async (code) => { const { data } = await api.post('/squads/join', { inviteCode: code }); set((s) => ({ squads: [...s.squads, data.squad], currentSquad: data.squad, members: data.members })); },
-  updateSquad: async (id, name, desc, img) => { const { data } = await api.patch(`/squads/${id}`, { name, description: desc || null, imageUrl: img || null }); set((s) => ({ currentSquad: data, squads: s.squads.map(sq => sq.id === id ? data : sq) })); },
-  leaveSquad: async (id) => { await api.delete(`/squads/${id}/leave`); set((s) => ({ squads: s.squads.filter(sq => sq.id !== id), currentSquad: null, members: [] })); },
+  updateSquad: async (id, name, desc, img) => { const { data } = await api.put(`/squads/${id}`, { name, description: desc || null, imageUrl: img || null }); set((s) => ({ currentSquad: data, squads: s.squads.map(sq => sq.id === id ? data : sq) })); },
+  leaveSquad: async (id) => { await api.post(`/squads/${id}/leave`); set((s) => ({ squads: s.squads.filter(sq => sq.id !== id), currentSquad: null, members: [] })); },
   clearCurrentSquad: () => set({ currentSquad: null, members: [] }),
   updateMembers: (members) => set({ members }),
 }));

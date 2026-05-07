@@ -87,7 +87,10 @@ public class AuthService {
     }
 
     public UserProfile getProfile(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
         return new UserProfile(
                 user.getId(),
                 user.getUsername(),

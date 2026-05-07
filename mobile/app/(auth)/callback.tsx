@@ -57,7 +57,15 @@ export default function AuthCallbackScreen() {
         await storage.setItemAsync('accessToken', finalParams.accessToken);
         await storage.setItemAsync('refreshToken', finalParams.refreshToken);
         await fetchProfile();
-        console.log('AuthCallbackScreen: Profile fetched, redirecting should happen via RootLayout');
+        // Since fetchProfile sets isAuthenticated, RootLayout handles success.
+        // But if it failed, we should redirect to login.
+        const { isAuthenticated } = useAuthStore.getState();
+        if (!isAuthenticated) {
+            console.error('AuthCallbackScreen: fetchProfile failed, returning to login');
+            router.replace('/(auth)/login?error=Network Error or backend unreachable');
+        } else {
+            console.log('AuthCallbackScreen: Profile fetched, redirecting should happen via RootLayout');
+        }
       } else {
         console.warn('No tokens found, returning to login');
         router.replace('/(auth)/login');

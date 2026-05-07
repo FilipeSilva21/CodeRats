@@ -3,10 +3,8 @@ import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 export const themeConstants = {
-  spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 },
-  // Reduced border radius as per UI_UX_PLAN.md
-  borderRadius: { sm: 4, md: 6, lg: 8, xl: 12, xxl: 16, full: 9999 },
-  // Removing heavy shadows/glows, relying on flat design and borders
+  spacing: { xs: 4, sm: 8, md: 12, lg: 20, xl: 24, xxl: 32, section: 24 },
+  borderRadius: { sm: 4, md: 8, lg: 12, xl: 16, xxl: 24, full: 9999 },
   shadows: {
     md: { elevation: 0, shadowColor: 'transparent', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0, shadowRadius: 0 },
     glow: { elevation: 0, shadowColor: 'transparent', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0, shadowRadius: 0 },

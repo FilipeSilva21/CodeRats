@@ -28,7 +28,7 @@ public class SquadService {
 
     @Transactional
     public SquadResponse create(String name, String ownerId) {
-        String inviteCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String inviteCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         
         Squad squad = new Squad();
         squad.setId(UUID.randomUUID().toString());
