@@ -68,7 +68,7 @@ public class AuthService {
     public TokenRefreshResponse refreshAccessToken(String token) {
         RefreshToken stored = refreshTokenRepository.findByToken(token);
         if (stored == null || stored.getExpiresAt().isBefore(Instant.now())) {
-            throw new RuntimeException("Invalid refresh token");
+            return null;
         }
         String userId = stored.getUserId();
         refreshTokenRepository.delete(stored);

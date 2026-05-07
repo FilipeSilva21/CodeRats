@@ -77,7 +77,11 @@ public class AuthController {
         if (refreshToken == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(authService.refreshAccessToken(refreshToken));
+        AuthService.TokenRefreshResponse response = authService.refreshAccessToken(refreshToken);
+        if (response == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")
