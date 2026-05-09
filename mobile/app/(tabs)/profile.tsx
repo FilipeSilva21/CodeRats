@@ -129,7 +129,7 @@ export default function ProfileScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  scroll: { paddingHorizontal: 24, paddingVertical: 16, paddingBottom: 60 },
+  scroll: { paddingHorizontal: 24, paddingVertical: 16, paddingBottom: 40 },
   title: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, letterSpacing: -1, marginBottom: 16 },
   profileCard: { paddingHorizontal: 24, paddingVertical: 16, marginBottom: 20, alignItems: 'center' },
   profileHeader: { alignItems: 'center', marginBottom: 16 },

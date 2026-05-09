@@ -133,7 +133,7 @@ export default function LeaderboardScreen() {
           <FlatList
             data={users.slice(3)}
             keyExtractor={(item) => item.userId}
-            contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: theme.spacing.xl }}
+            contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: theme.spacing.xl }}
             ListHeaderComponent={renderTopThree}
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={fetchGlobalLeaderboard} tintColor={theme.colors.accent} />}
             renderItem={renderItem}

@@ -120,7 +120,7 @@ export default function SquadScreen() {
               </View>
             </ScrollView>
           ) : (
-            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 60 }}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}>
               <Card style={s.squadDetailCard}>
                 <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center', marginBottom: 20 }}>
                   {currentSquad.imageUrl ? (
@@ -263,7 +263,7 @@ export default function SquadScreen() {
               <FlatList
                 data={squads}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{ gap: 12, paddingBottom: 60, paddingTop: 24, paddingHorizontal: 24 }}
+                contentContainerStyle={{ gap: 12, paddingBottom: 40, paddingTop: 24, paddingHorizontal: 24 }}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => handleSelectSquad(item.id)} activeOpacity={0.7}>
                     <Card style={s.squadCard}>
