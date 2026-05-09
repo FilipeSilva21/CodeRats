@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 600,
     alignSelf: 'center',
-    paddingTop: 40, // Padding superior maior para celulares (notch/status bar)
-    paddingBottom: 0, // Removido o padding inferior global
+    paddingTop: 40,
+    paddingBottom: 0,
   }
 });
