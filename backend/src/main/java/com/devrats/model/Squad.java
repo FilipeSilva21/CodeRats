@@ -19,7 +19,7 @@ public class Squad {
     @Column(length = 500)
     private String description;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     @Column(name = "invite_code", length = 6, unique = true, nullable = false)

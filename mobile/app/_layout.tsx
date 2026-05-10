@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: 'center',
     paddingTop: 40,
-    paddingBottom: 0,
+    paddingBottom: 5
   }
 });

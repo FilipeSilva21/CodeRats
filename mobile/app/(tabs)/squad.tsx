@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TextInput, ActivityIndicator, Alert, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TextInput, ActivityIndicator, Alert, TouchableOpacity, Image, ScrollView, Platform } from 'react-native';
 import { useTheme, useStyles } from '../../src/theme';
 import { Card } from '../../src/components/ui/Card';
 import { Button } from '../../src/components/ui/Button';
@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SquadScreen() {
-  const { squads, currentSquad, members, isLoading, fetchMySquads, createSquad, joinSquad, fetchSquadDetails, clearCurrentSquad, updateSquad, leaveSquad } = useSquadStore();
+  const { squads, currentSquad, members, isLoading, fetchMySquads, createSquad, joinSquad, fetchSquadDetails, clearCurrentSquad, updateSquad, leaveSquad, deleteSquad } = useSquadStore();
   const { user } = useAuthStore();
   const theme = useTheme();
   const s = useStyles(styles);
@@ -28,6 +28,20 @@ export default function SquadScreen() {
   useEffect(() => {
     fetchMySquads();
   }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.2, // Low quality to keep base64 small
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets[0].base64) {
+      setEditImg("data:image/jpeg;base64," + result.assets[0].base64);
+    }
+  };
 
   const handleCreate = async () => {
     if (!newSquadName.trim()) return;
@@ -73,15 +87,59 @@ export default function SquadScreen() {
     }
   }
 
-  const handleLeave = () => {
+  const handleLeave = async () => {
     if (!currentSquad) return;
+    
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you sure you want to leave this squad?')) {
+        try {
+          await leaveSquad(currentSquad.id);
+        } catch(e:any) {
+          Alert.alert('Error', e.response?.data?.error || e.message || 'Failed to leave squad');
+        }
+      }
+      return;
+    }
+
     Alert.alert('Confirm', 'Are you sure you want to leave this squad?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: async () => {
         try {
           await leaveSquad(currentSquad.id);
         } catch(e:any) {
-          Alert.alert('Error', e.message || 'Failed to leave squad');
+          Alert.alert('Error', e.response?.data?.error || e.message || 'Failed to leave squad');
+        }
+      }}
+    ])
+  }
+
+  const handleDelete = async () => {
+    if (!currentSquad) return;
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you absolutely sure you want to permanently delete this squad? This action cannot be undone.')) {
+        try {
+          await deleteSquad(currentSquad.id);
+          setEditMode(false);
+          setActiveTab('my_squads');
+          await fetchMySquads();
+        } catch(e:any) {
+          Alert.alert('Error', e.response?.data?.error || e.message || 'Failed to delete squad');
+        }
+      }
+      return;
+    }
+
+    Alert.alert('Delete Squad', 'Are you absolutely sure you want to permanently delete this squad? This action cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: async () => {
+        try {
+          await deleteSquad(currentSquad.id);
+          setEditMode(false);
+          setActiveTab('my_squads');
+          await fetchMySquads();
+        } catch(e:any) {
+          Alert.alert('Error', e.response?.data?.error || e.message || 'Failed to delete squad');
         }
       }}
     ])
@@ -94,7 +152,7 @@ export default function SquadScreen() {
       <View style={s.c}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24, gap: 12, paddingHorizontal: 24, paddingTop: 16 }}>
-            <TouchableOpacity onPress={clearCurrentSquad} style={s.backBtn}>
+            <TouchableOpacity onPress={() => { setEditMode(false); clearCurrentSquad(); }} style={s.backBtn}>
               <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
             </TouchableOpacity>
             <Text style={s.title} numberOfLines={1}>{editMode ? 'Edit Squad' : currentSquad.name}</Text>
@@ -118,6 +176,7 @@ export default function SquadScreen() {
                 <Button title="Cancel" onPress={() => setEditMode(false)} variant="secondary" style={{ flex: 1 }} />
                 <Button title="Save Changes" onPress={handleSaveEdit} variant="primary" style={{ flex: 1 }} />
               </View>
+              <Button title="Delete Squad" onPress={handleDelete} variant="secondary" style={{ marginTop: 12, borderColor: theme.colors.danger }} icon={<Ionicons name="trash-outline" size={16} color={theme.colors.danger} />} />
             </ScrollView>
           ) : (
             <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}>
@@ -298,28 +357,28 @@ export default function SquadScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border },
-  pageHeader: { color: theme.colors.text, fontSize: 32, fontWeight: '800' as const, marginBottom: 8, letterSpacing: -1, paddingHorizontal: theme.spacing.xl, paddingTop: 16 },
-  title: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, flex: 1, letterSpacing: -0.5 },
-  tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.border, paddingHorizontal: theme.spacing.xl },
-  tab: { flex: 1, paddingVertical: 16, alignItems: 'center' },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border },
+  pageHeader: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, marginBottom: 8, letterSpacing: -0.5, paddingHorizontal: 16, paddingTop: 12 },
+  title: { color: theme.colors.text, fontSize: 20, fontWeight: '800' as const, flex: 1, letterSpacing: -0.5 },
+  tabContainer: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.colors.border, paddingHorizontal: 16 },
+  tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
   activeTab: { borderBottomWidth: 2, borderBottomColor: theme.colors.accent },
-  tabText: { color: theme.colors.textMuted, fontSize: 15, fontWeight: '600' as const },
+  tabText: { color: theme.colors.textMuted, fontSize: 13, fontWeight: '600' as const },
   activeTabText: { color: theme.colors.accent, fontWeight: '700' as const },
-  inputLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700' as const, marginBottom: 8, textTransform: 'uppercase' as const, letterSpacing: 0.5 },
-  input: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, paddingHorizontal: 16, paddingVertical: 14, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, fontSize: 16 },
-  squadDetailCard: { padding: 20, marginBottom: 16 },
-  codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, backgroundColor: theme.colors.background, paddingHorizontal: 10, paddingVertical: 6, borderRadius: theme.borderRadius.sm, alignSelf: 'flex-start' as const, borderWidth: 1, borderColor: theme.colors.border },
-  squadCode: { color: theme.colors.accent, fontSize: 16, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 2 },
-  squadCard: { flexDirection: 'row', alignItems: 'center', padding: 16 },
-  squadName: { color: theme.colors.text, fontSize: 17, fontWeight: '700' as const, marginBottom: 2 },
-  squadCodeSmall: { color: theme.colors.textMuted, fontSize: 12, fontFamily: 'monospace', fontWeight: '600' as const },
-  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 12, borderLeftWidth: 1, borderLeftColor: theme.colors.border },
-  memberCount: { color: theme.colors.text, fontWeight: '700' as const, fontSize: 13 },
+  inputLabel: { color: theme.colors.textSecondary, fontSize: 11, fontWeight: '700' as const, marginBottom: 6, textTransform: 'uppercase' as const, letterSpacing: 0.5 },
+  input: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, paddingHorizontal: 14, paddingVertical: 12, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, fontSize: 14 },
+  squadDetailCard: { padding: 16, marginBottom: 16 },
+  codeContainer: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, backgroundColor: theme.colors.background, paddingHorizontal: 8, paddingVertical: 4, borderRadius: theme.borderRadius.sm, alignSelf: 'flex-start' as const, borderWidth: 1, borderColor: theme.colors.border },
+  squadCode: { color: theme.colors.accent, fontSize: 14, fontWeight: '800' as const, fontFamily: 'monospace', letterSpacing: 1.5 },
+  squadCard: { flexDirection: 'row', alignItems: 'center', padding: 14 },
+  squadName: { color: theme.colors.text, fontSize: 15, fontWeight: '700' as const, marginBottom: 2 },
+  squadCodeSmall: { color: theme.colors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: '600' as const },
+  memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 10, borderLeftWidth: 1, borderLeftColor: theme.colors.border },
+  memberCount: { color: theme.colors.text, fontWeight: '700' as const, fontSize: 12 },
   membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' as const },
-  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
-  scorePill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border },
+  memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+  scorePill: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border },
   dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 8 },
   dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.border },
-  dividerText: { color: theme.colors.textMuted, fontSize: 12, fontWeight: '800' as const }
+  dividerText: { color: theme.colors.textMuted, fontSize: 11, fontWeight: '800' as const }
 });

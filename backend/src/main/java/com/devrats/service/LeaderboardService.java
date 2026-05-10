@@ -1,44 +1,74 @@
 package com.devrats.service;
 
+import com.devrats.model.LeagueGroup;
+import com.devrats.model.Score;
 import com.devrats.model.User;
+import com.devrats.repository.LeagueGroupRepository;
+import com.devrats.repository.ScoreRepository;
 import com.devrats.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LeaderboardService {
     private final UserRepository userRepository;
+    private final LeagueGroupRepository leagueGroupRepository;
+    private final ScoreRepository scoreRepository;
+    private final LeagueService leagueService;
 
-    public LeaderboardService(UserRepository userRepository) {
+    public LeaderboardService(UserRepository userRepository, LeagueGroupRepository leagueGroupRepository, ScoreRepository scoreRepository, LeagueService leagueService) {
         this.userRepository = userRepository;
+        this.leagueGroupRepository = leagueGroupRepository;
+        this.scoreRepository = scoreRepository;
+        this.leagueService = leagueService;
     }
 
-    public List<LeaderboardEntry> getGlobalLeaderboard(int limit, String league) {
-        List<User> users = userRepository.findAll();
+    public List<LeaderboardEntry> getGroupLeaderboard(String userId) {
+        User currentUser = userRepository.findById(userId).orElseThrow();
         
-        if (league != null && !league.isBlank()) {
-            users = users.stream().filter(u -> league.equals(u.getLeague())).collect(Collectors.toList());
+        if (currentUser.getActiveLeagueGroupId() == null) {
+            leagueService.assignUserToGroup(currentUser);
+            currentUser = userRepository.findById(userId).orElseThrow();
         }
 
-        users.sort(Comparator.comparing(User::getTotalScore).reversed());
-
-        int limitSize = Math.min(users.size(), limit);
-        List<LeaderboardEntry> leaderboard = new java.util.ArrayList<>();
+        String groupId = currentUser.getActiveLeagueGroupId();
+        LeagueGroup group = leagueGroupRepository.findById(groupId).orElse(null);
         
-        for (int i = 0; i < limitSize; i++) {
-            User u = users.get(i);
+        List<User> groupMembers = userRepository.findAll().stream()
+                .filter(u -> groupId.equals(u.getActiveLeagueGroupId()))
+                .toList();
+
+        List<LeaderboardEntry> leaderboard = new ArrayList<>();
+        
+        for (User u : groupMembers) {
+            int weeklyXp = 0;
+            if (group != null) {
+                weeklyXp = scoreRepository.findByUserIdAndScoredAtGreaterThanEqual(u.getId(), group.getCreatedAt())
+                        .stream().mapToInt(Score::getPoints).sum();
+            }
+            
             leaderboard.add(new LeaderboardEntry(
-                    i + 1,
+                    0, // Will be set during sorting
                     u.getId(),
                     u.getUsername(),
                     u.getDisplayName(),
                     u.getAvatarUrl(),
-                    u.getTotalScore(),
+                    weeklyXp, // Replaced totalScore with weeklyXp for the ranking
                     u.getEffectiveStreak(),
                     u.getLeague()
+            ));
+        }
+
+        leaderboard.sort(Comparator.comparing(LeaderboardEntry::totalScore).reversed());
+
+        for (int i = 0; i < leaderboard.size(); i++) {
+            LeaderboardEntry old = leaderboard.get(i);
+            leaderboard.set(i, new LeaderboardEntry(
+                    i + 1, old.userId(), old.username(), old.displayName(), 
+                    old.avatarUrl(), old.totalScore(), old.currentStreak(), old.league()
             ));
         }
         

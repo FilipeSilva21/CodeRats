@@ -45,6 +45,9 @@ public class User {
     @Column(length = 20, nullable = false)
     private String league = "BRONZE";
 
+    @Column(name = "active_league_group_id", length = 36)
+    private String activeLeagueGroupId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -80,6 +83,9 @@ public class User {
     
     public String getLeague() { return league; }
     public void setLeague(String league) { this.league = league; }
+    
+    public String getActiveLeagueGroupId() { return activeLeagueGroupId; }
+    public void setActiveLeagueGroupId(String activeLeagueGroupId) { this.activeLeagueGroupId = activeLeagueGroupId; }
     
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

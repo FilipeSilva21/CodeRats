@@ -89,6 +89,16 @@ public class SquadService {
     }
 
     @Transactional
+    public void deleteSquad(String squadId, String userId) {
+        Squad squad = squadRepository.findById(squadId).orElseThrow(() -> new RuntimeException("Squad not found"));
+        if (!squad.getOwnerId().equals(userId)) {
+            throw new RuntimeException("Only the owner can delete the squad");
+        }
+        squadMemberRepository.deleteBySquadId(squadId);
+        squadRepository.delete(squad);
+    }
+
+    @Transactional
     public SquadResponse updateSquad(String squadId, String userId, String name, String description, String imageUrl) {
         Squad squad = squadRepository.findById(squadId).orElseThrow(() -> new RuntimeException("Squad not found"));
         if (!squad.getOwnerId().equals(userId)) {

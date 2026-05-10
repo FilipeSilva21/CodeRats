@@ -5,6 +5,7 @@ C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\d
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\model\Score.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\websocket\ScoreWebSocketHandler.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\service\WeeklyReportService.java
+C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\service\LeagueService.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\controller\ScoreController.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\repository\SquadMemberRepository.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\service\LeaderboardService.java
@@ -19,8 +20,10 @@ C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\d
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\repository\ScoreRepository.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\controller\SquadController.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\model\SquadMember.java
+C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\repository\LeagueGroupRepository.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\security\JwtAuthenticationFilter.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\service\SquadService.java
+C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\model\LeagueGroup.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\model\Squad.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\security\HmacValidator.java
 C:\Users\filip\Downloads\Projects\FullStack\CodeRats\backend\src\main\java\com\devrats\repository\RefreshTokenRepository.java

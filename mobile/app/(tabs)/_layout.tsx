@@ -6,22 +6,22 @@ export default function TabsLayout() {
   const theme = useTheme();
 
   return (
-    <Tabs 
-      screenOptions={{ 
-        headerShown: false, 
-        tabBarActiveTintColor: theme.colors.primary, 
-        tabBarInactiveTintColor: theme.colors.textMuted, 
-        tabBarStyle: { 
-          backgroundColor: theme.colors.surface, 
-          borderTopColor: theme.colors.border, 
-          borderTopWidth: 1, 
-          height: 65, 
-          paddingBottom: 8, 
-          paddingTop: 8, 
-          elevation: 0, 
-          shadowOpacity: 0 
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
+          borderTopWidth: 1,
+          height: 65,
+          paddingBottom: 8,
+          paddingTop: 8,
+          elevation: 0,
+          shadowOpacity: 0
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' } 
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' }
       }}
     >
       <Tabs.Screen name="home" options={{ title: 'Home', tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }} />

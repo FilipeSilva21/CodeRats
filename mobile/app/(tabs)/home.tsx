@@ -113,17 +113,17 @@ export default function HomeScreen() {
             </Card>
           ) : (
             <View style={s.activityList}>
-              {recentScores.map((score, idx) => (
+              {recentScores.slice(0, 10).map((score, idx) => (
                 <View key={idx} style={s.activityRow}>
                   <View style={s.activityLeft}>
                     <View style={[s.activityIconBox, { backgroundColor: theme.colors.backgroundSecondary }]}>
                       <Ionicons name="git-commit-outline" size={20} color={theme.colors.text} />
                     </View>
-                    <View>
-                      <Text style={s.activityTitle}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.activityTitle} numberOfLines={1}>
                         Commit Pushed {score.repositoryName ? `- ${score.repositoryName.split('/').pop()}` : ''}
                       </Text>
-                      <Text style={s.activitySub}>
+                      <Text style={s.activitySub} numberOfLines={1}>
                         {new Date(score.scoredAt).toLocaleDateString()} {score.commitHash ? `• ${score.commitHash.substring(0, 7)}` : ''}
                       </Text>
                     </View>
@@ -145,40 +145,40 @@ export default function HomeScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  scroll: { paddingHorizontal: theme.spacing.xl, paddingVertical: 16, gap: 16, paddingTop: 16 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  greeting: { color: theme.colors.textSecondary, fontSize: 16, fontWeight: '500' as const, marginBottom: 4 },
-  name: { color: theme.colors.text, fontSize: 32, fontWeight: '800' as const, letterSpacing: -0.5 },
+  scroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 12, paddingTop: 12 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  greeting: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '500' as const, marginBottom: 2 },
+  name: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, letterSpacing: -0.5 },
   avatarContainer: { position: 'relative' as const },
-  onlineIndicator: { position: 'absolute' as const, bottom: 2, right: 2, width: 14, height: 14, borderRadius: 7, backgroundColor: theme.colors.success, borderWidth: 2, borderColor: theme.colors.background },
+  onlineIndicator: { position: 'absolute' as const, bottom: 2, right: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: theme.colors.success, borderWidth: 2, borderColor: theme.colors.background },
   mainCard: { padding: 0, overflow: 'hidden' as const, marginBottom: 8 },
-  mainCardInner: { paddingHorizontal: 20, paddingVertical: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' as const },
-  scoreLabel: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '700' as const, letterSpacing: 1.5, marginBottom: 8 },
-  scoreVal: { color: theme.colors.text, fontSize: 48, fontWeight: '900' as const, letterSpacing: -2, lineHeight: 52 },
-  streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.background, paddingHorizontal: 10, paddingVertical: 5, borderRadius: theme.borderRadius.full, gap: 4, borderWidth: 1, borderColor: theme.colors.border },
-  streakText: { color: theme.colors.warning, fontWeight: '700' as const, fontSize: 12 },
-  progressContainer: { paddingHorizontal: 20, paddingBottom: 16, gap: 10 },
+  mainCardInner: { paddingHorizontal: 16, paddingVertical: 14, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' as const },
+  scoreLabel: { color: theme.colors.textSecondary, fontSize: 11, fontWeight: '700' as const, letterSpacing: 1.5, marginBottom: 6 },
+  scoreVal: { color: theme.colors.text, fontSize: 36, fontWeight: '900' as const, letterSpacing: -1, lineHeight: 40 },
+  streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.background, paddingHorizontal: 8, paddingVertical: 4, borderRadius: theme.borderRadius.full, gap: 4, borderWidth: 1, borderColor: theme.colors.border },
+  streakText: { color: theme.colors.warning, fontWeight: '700' as const, fontSize: 11 },
+  progressContainer: { paddingHorizontal: 16, paddingBottom: 14, gap: 8 },
   progressHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' as const },
-  progressText: { color: theme.colors.textSecondary, fontSize: 13, fontWeight: '600' as const },
-  progressValue: { color: theme.colors.text, fontSize: 14, fontWeight: '700' as const },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
-  section: { color: theme.colors.text, fontSize: 20, fontWeight: '800' as const, letterSpacing: -0.5 },
-  seeAll: { color: theme.colors.accent, fontSize: 13, fontWeight: '700' as const },
-  bar: { height: 6, backgroundColor: theme.colors.border, borderRadius: 3, overflow: 'hidden' as const },
-  fill: { height: '100%', borderRadius: 3 },
-  grid: { flexDirection: 'row', gap: 12 },
-  stat: { flex: 1, alignItems: 'flex-start' as const, paddingHorizontal: 16, paddingVertical: 14 },
-  iconBox: { width: 36, height: 36, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
-  statVal: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, letterSpacing: -1, marginBottom: 2 },
-  statLabel: { color: theme.colors.textSecondary, fontSize: 12, fontWeight: '600' as const },
-  activityList: { gap: 10 },
-  activityRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border },
-  activityLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  activityIconBox: { width: 36, height: 36, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
-  activityTitle: { color: theme.colors.text, fontSize: 15, fontWeight: '700' as const, marginBottom: 4 },
-  activitySub: { color: theme.colors.textMuted, fontSize: 12 },
-  pointsPill: { backgroundColor: theme.colors.background, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.border },
-  activityPoints: { color: theme.colors.text, fontSize: 13, fontWeight: '800' as const },
-  emptyCard: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12, borderStyle: 'dashed' as const },
-  emptySubText: { color: theme.colors.textMuted, fontSize: 14 }
+  progressText: { color: theme.colors.textSecondary, fontSize: 11, fontWeight: '600' as const },
+  progressValue: { color: theme.colors.text, fontSize: 12, fontWeight: '700' as const },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
+  section: { color: theme.colors.text, fontSize: 16, fontWeight: '800' as const, letterSpacing: -0.5 },
+  seeAll: { color: theme.colors.accent, fontSize: 11, fontWeight: '700' as const },
+  bar: { height: 4, backgroundColor: theme.colors.border, borderRadius: 2, overflow: 'hidden' as const },
+  fill: { height: '100%', borderRadius: 2 },
+  grid: { flexDirection: 'row', gap: 10 },
+  stat: { flex: 1, alignItems: 'flex-start' as const, paddingHorizontal: 12, paddingVertical: 10 },
+  iconBox: { width: 28, height: 28, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
+  statVal: { color: theme.colors.text, fontSize: 18, fontWeight: '800' as const, letterSpacing: -0.5, marginBottom: 2 },
+  statLabel: { color: theme.colors.textSecondary, fontSize: 10, fontWeight: '600' as const },
+  activityList: { gap: 8 },
+  activityRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border },
+  activityLeft: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1, paddingRight: 8 },
+  activityIconBox: { width: 28, height: 28, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
+  activityTitle: { color: theme.colors.text, fontSize: 13, fontWeight: '700' as const, marginBottom: 2 },
+  activitySub: { color: theme.colors.textMuted, fontSize: 10 },
+  pointsPill: { backgroundColor: theme.colors.background, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.border, marginRight: -5 },
+  activityPoints: { color: theme.colors.text, fontSize: 11, fontWeight: '800' as const },
+  emptyCard: { alignItems: 'center', justifyContent: 'center', padding: 20, gap: 10, borderStyle: 'dashed' as const },
+  emptySubText: { color: theme.colors.textMuted, fontSize: 12 }
 } as any);

@@ -58,17 +58,17 @@ export default function ActivityScreen() {
 
 const styles = (theme: ReturnType<typeof useTheme>) => ({
   c: { flex: 1, backgroundColor: theme.colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 24, paddingBottom: 16, gap: 16 },
-  backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
-  title: { color: theme.colors.text, fontSize: 24, fontWeight: '800' as const, letterSpacing: -0.5 },
-  scroll: { padding: 24, gap: 16, paddingBottom: 64 },
-  activityRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.glassBorder },
-  activityLeft: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  activityIconBox: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  activityTitle: { color: theme.colors.text, fontSize: 16, fontWeight: '700' as const, marginBottom: 4 },
-  activitySub: { color: theme.colors.textMuted, fontSize: 13 },
-  pointsPill: { backgroundColor: 'rgba(99, 102, 241, 0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  activityPoints: { color: theme.colors.primary, fontSize: 15, fontWeight: '800' as const },
-  emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 64, gap: 16 },
-  emptyText: { color: theme.colors.textSecondary, fontSize: 18, fontWeight: '600' as const }
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12, gap: 12 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.glassBorder },
+  title: { color: theme.colors.text, fontSize: 20, fontWeight: '800' as const, letterSpacing: -0.5 },
+  scroll: { paddingHorizontal: 16, paddingVertical: 12, gap: 12, paddingBottom: 40 },
+  activityRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.glassBorder },
+  activityLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  activityIconBox: { width: 36, height: 36, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center' },
+  activityTitle: { color: theme.colors.text, fontSize: 14, fontWeight: '700' as const, marginBottom: 2 },
+  activitySub: { color: theme.colors.textMuted, fontSize: 11 },
+  pointsPill: { backgroundColor: 'rgba(99, 102, 241, 0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  activityPoints: { color: theme.colors.primary, fontSize: 13, fontWeight: '800' as const },
+  emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40, gap: 12 },
+  emptyText: { color: theme.colors.textSecondary, fontSize: 15, fontWeight: '600' as const }
 });

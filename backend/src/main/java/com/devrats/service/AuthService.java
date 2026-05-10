@@ -17,11 +17,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
+    private final LeagueService leagueService;
 
-    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider) {
+    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider, LeagueService leagueService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtProvider = jwtProvider;
+        this.leagueService = leagueService;
     }
 
     @Transactional
@@ -37,6 +39,8 @@ public class AuthService {
             user.setEmail(email);
             user = userRepository.save(user);
         }
+
+        leagueService.assignUserToGroup(user);
 
         String accessToken = jwtProvider.generateAccessToken(user.getId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getId());

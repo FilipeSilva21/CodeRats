@@ -80,6 +80,19 @@ public class SquadController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSquad(@PathVariable String id) {
+        String userId = getUserId();
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        
+        try {
+            squadService.deleteSquad(id, userId);
+            return ResponseEntity.ok(Map.of("status", "ok"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSquad(@PathVariable String id, @RequestBody Map<String, String> body) {
         String userId = getUserId();

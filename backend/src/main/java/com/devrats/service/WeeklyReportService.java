@@ -47,8 +47,6 @@ public class WeeklyReportService {
                 .filter(u -> u.getEmail() != null && !u.getEmail().isBlank())
                 .toList();
                 
-        List<LeaderboardService.LeaderboardEntry> globalLeaderboard = leaderboardService.getGlobalLeaderboard(1000, null);
-        
         Instant sevenDaysAgo = LocalDate.now().minusDays(7).atStartOfDay(ZoneOffset.UTC).toInstant();
 
         for (User user : users) {
@@ -72,7 +70,9 @@ public class WeeklyReportService {
                     .map(Map.Entry::getKey)
                     .orElse("N/A");
 
-            String globalRank = globalLeaderboard.stream()
+            // Calculate group rank
+            List<LeaderboardService.LeaderboardEntry> groupLeaderboard = leaderboardService.getGroupLeaderboard(userId);
+            String groupRank = groupLeaderboard.stream()
                     .filter(e -> e.userId().equals(userId))
                     .map(e -> String.valueOf(e.rank()))
                     .findFirst()
@@ -114,14 +114,14 @@ public class WeeklyReportService {
                         <li><strong>Weekly Commits:</strong> %d</li>
                         <li><strong>Weekly Points:</strong> %d</li>
                         <li><strong>Top Repository:</strong> %s</li>
-                        <li><strong>Global Rank:</strong> #%s</li>
+                        <li><strong>League Rank (%s):</strong> #%s</li>
                     </ul>
                     %s
                     <p>Keep up the great work and don't break that streak!</p>
                     <p>Cheers,<br/>The DevRats Team</p>
                 </body>
                 </html>
-            """, name, weeklyCommits, weeklyPoints, topRepo, globalRank, squadInfoHtml.toString());
+            """, name, weeklyCommits, weeklyPoints, topRepo, user.getLeague(), groupRank, squadInfoHtml.toString());
 
             emailService.sendHtmlEmail(email, "Your DevRats Weekly Report", html);
         }

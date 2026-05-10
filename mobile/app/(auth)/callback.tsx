@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, useRootNavigationState } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { storage } from '../../src/lib/storage';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { theme } from '../../src/theme';
@@ -26,7 +27,26 @@ export default function AuthCallbackScreen() {
     if (!isReady) return;
 
     const handleCallback = async () => {
+      console.log('AuthCallbackScreen: handleCallback triggered');
       let finalParams = { ...params };
+
+      // On iOS/Android, params from deep linking might be nested or in the URL search string
+      if (!finalParams.accessToken) {
+        try {
+          const url = await Linking.getInitialURL();
+          console.log('AuthCallbackScreen: getInitialURL:', url);
+          if (url) {
+            const parsed = Linking.parse(url);
+            if (parsed.queryParams?.accessToken) {
+              finalParams.accessToken = parsed.queryParams.accessToken as string;
+              finalParams.refreshToken = parsed.queryParams.refreshToken as string;
+              console.log('AuthCallbackScreen: Found tokens in initial URL');
+            }
+          }
+        } catch (e) {
+          console.error('AuthCallbackScreen: Error checking initial URL:', e);
+        }
+      }
 
       if (Platform.OS === 'web' && !finalParams.accessToken) {
         const search = window.location.search;

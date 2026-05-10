@@ -20,10 +20,13 @@ public class AuthController {
     private final GitHubApiClient gitHubApiClient;
     private final String clientId;
 
-    public AuthController(AuthService authService, GitHubApiClient gitHubApiClient, org.springframework.core.env.Environment env) {
+    public AuthController(
+            AuthService authService, 
+            GitHubApiClient gitHubApiClient, 
+            @org.springframework.beans.factory.annotation.Value("${github.clientId}") String clientId) {
         this.authService = authService;
         this.gitHubApiClient = gitHubApiClient;
-        this.clientId = env.getProperty("github.clientId", "");
+        this.clientId = clientId;
     }
 
     @GetMapping("/github/login")
@@ -34,6 +37,10 @@ public class AuthController {
                 "?client_id=" + clientId +
                 "&scope=read:user,user:email" +
                 "&state=" + state;
+        
+        System.out.println("[DEBUG LOGIN] Client ID loaded: '" + clientId + "'");
+        System.out.println("[DEBUG LOGIN] Redirecting to: " + githubAuthUrl);
+        
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(githubAuthUrl)).build();
     }
 
