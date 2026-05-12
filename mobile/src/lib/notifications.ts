@@ -9,6 +9,12 @@ export interface Notification {
   createdAt: string;
 }
 
+export interface NotificationPreferences {
+  pushEnabled: boolean;
+  emailWeekly: boolean;
+  squadAlerts: boolean;
+}
+
 export const notificationsService = {
   getNotifications: async (): Promise<Notification[]> => {
     try {
@@ -26,5 +32,23 @@ export const notificationsService = {
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
-  }
+  },
+
+  getPreferences: async (): Promise<NotificationPreferences> => {
+    try {
+      const response = await api.get('/notifications/preferences');
+      return response.data.data;
+    } catch (error) {
+      console.error('Failed to fetch notification preferences:', error);
+      return { pushEnabled: true, emailWeekly: false, squadAlerts: true };
+    }
+  },
+
+  updatePreferences: async (prefs: Partial<NotificationPreferences>): Promise<void> => {
+    try {
+      await api.put('/notifications/preferences', prefs);
+    } catch (error) {
+      console.error('Failed to update notification preferences:', error);
+    }
+  },
 };

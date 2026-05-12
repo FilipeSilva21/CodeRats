@@ -48,6 +48,15 @@ public class User {
     @Column(name = "active_league_group_id", length = 36)
     private String activeLeagueGroupId;
 
+    @Column(name = "notif_push_enabled")
+    private Boolean notifPushEnabled = true;
+
+    @Column(name = "notif_email_weekly")
+    private Boolean notifEmailWeekly = false;
+
+    @Column(name = "notif_squad_alerts")
+    private Boolean notifSquadAlerts = true;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -86,7 +95,16 @@ public class User {
     
     public String getActiveLeagueGroupId() { return activeLeagueGroupId; }
     public void setActiveLeagueGroupId(String activeLeagueGroupId) { this.activeLeagueGroupId = activeLeagueGroupId; }
-    
+
+    public Boolean getNotifPushEnabled() { return notifPushEnabled != null ? notifPushEnabled : true; }
+    public void setNotifPushEnabled(Boolean notifPushEnabled) { this.notifPushEnabled = notifPushEnabled; }
+
+    public Boolean getNotifEmailWeekly() { return notifEmailWeekly != null ? notifEmailWeekly : false; }
+    public void setNotifEmailWeekly(Boolean notifEmailWeekly) { this.notifEmailWeekly = notifEmailWeekly; }
+
+    public Boolean getNotifSquadAlerts() { return notifSquadAlerts != null ? notifSquadAlerts : true; }
+    public void setNotifSquadAlerts(Boolean notifSquadAlerts) { this.notifSquadAlerts = notifSquadAlerts; }
+
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 

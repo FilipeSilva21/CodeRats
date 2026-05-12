@@ -45,6 +45,7 @@ public class WeeklyReportService {
 
         List<User> users = userRepository.findAll().stream()
                 .filter(u -> u.getEmail() != null && !u.getEmail().isBlank())
+                .filter(u -> Boolean.TRUE.equals(u.getNotifEmailWeekly()))
                 .toList();
                 
         Instant sevenDaysAgo = LocalDate.now().minusDays(7).atStartOfDay(ZoneOffset.UTC).toInstant();

@@ -10,18 +10,15 @@ DevRats is a gamified development platform that tracks GitHub activity and turns
 
 ```
 CodeRats/
-├── backend/          # Kotlin + Ktor API (port 8080)
-│   ├── src/main/kotlin/com/devrats/
-│   │   ├── Application.kt         # Entry point
-│   │   ├── di/                     # Koin Dependency Injection
-│   │   ├── plugins/                # Ktor Plugins (Auth, CORS, DB, etc.)
-│   │   ├── features/
-│   │   │   ├── auth/               # GitHub OAuth + JWT
-│   │   │   ├── github/             # Webhook processing
-│   │   │   ├── scoring/            # Anti-cheat scoring engine
-│   │   │   ├── squad/              # Team management
-│   │   │   └── leaderboard/        # Rankings + WebSocket
-│   │   └── shared/                 # Security, exceptions, extensions
+├── backend/          # Java + Spring Boot API (port 8080)
+│   ├── src/main/java/com/devrats/
+│   │   ├── DevRatsApplication.java # Entry point
+│   │   ├── controller/             # REST Controllers
+│   │   ├── service/                # Business Logic (Scoring, Auth, Squad)
+│   │   ├── model/                  # JPA Entities
+│   │   ├── repository/             # Spring Data Repositories
+│   │   ├── security/               # HMAC & Security Filters
+│   │   └── websocket/              # Real-time WebSockets
 │   └── docker-compose.yml          # PostgreSQL 16
 │
 ├── mobile/           # React Native + Expo (port 8081)
@@ -41,12 +38,12 @@ CodeRats/
 
 | Layer      | Technology                         |
 |------------|------------------------------------|
-| **Backend**    | Kotlin, Ktor 3.x, Exposed ORM    |
+| **Backend**    | Java 21, Spring Boot 3.x, Spring Data JPA |
 | **Frontend**   | React Native, Expo SDK 54, Expo Router |
 | **Database**   | PostgreSQL 16 (Docker)            |
 | **Auth**       | GitHub OAuth 2.0, JWT             |
-| **DI**         | Koin 4.x                          |
-| **Real-time**  | WebSockets (Ktor native)          |
+| **DI**         | Spring IoC                        |
+| **Real-time**  | Spring WebSockets                 |
 | **State**      | Zustand                           |
 | **HTTP Client**| Axios (with JWT auto-refresh)     |
 
@@ -169,7 +166,7 @@ Press `w` to open in browser, or scan the QR code with Expo Go.
 ### Project Structure Philosophy
 
 - **Feature-based architecture** — each domain (auth, scoring, squad) is self-contained
-- **Modular plugins** — Ktor plugins are independently testable
+- **Spring Ecosystem** — Service-oriented architecture with dependency injection
 - **Zustand stores** — lightweight, hook-based state management
 - **Design tokens** — centralized theme for consistent dark-mode UI
 
