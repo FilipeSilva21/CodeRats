@@ -20,4 +20,8 @@ public interface ScoreRepository extends JpaRepository<Score, String> {
     
     @Query("SELECT SUM(s.points) FROM Score s WHERE s.userId = :userId AND s.scoredAt >= :since")
     Integer sumPointsByUserIdAndScoredAtAfter(String userId, Instant since);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Score s WHERE s.userId = :userId")
+    void deleteByUserId(String userId);
 }

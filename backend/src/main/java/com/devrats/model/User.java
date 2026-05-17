@@ -60,6 +60,9 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     
@@ -107,6 +110,9 @@ public class User {
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
 
     public int getEffectiveStreak() {
         if (currentStreak == null || currentStreak == 0) return 0;

@@ -1,6 +1,5 @@
 package com.devrats.controller;
 
-import com.devrats.model.Score;
 import com.devrats.model.User;
 import com.devrats.repository.ScoreRepository;
 import com.devrats.repository.UserRepository;
@@ -12,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 @RestController
@@ -22,7 +20,8 @@ public class ScoreController {
     private final UserRepository userRepository;
     private final ScoringService scoringService;
 
-    public ScoreController(ScoreRepository scoreRepository, UserRepository userRepository, ScoringService scoringService) {
+    public ScoreController(ScoreRepository scoreRepository, UserRepository userRepository,
+            ScoringService scoringService) {
         this.scoreRepository = scoreRepository;
         this.userRepository = userRepository;
         this.scoringService = scoringService;
@@ -49,8 +48,7 @@ public class ScoreController {
                         s.getScoreSource(),
                         s.getCommitHash(),
                         s.getRepositoryName(),
-                        s.getScoredAt() != null ? s.getScoredAt().toString() : null
-                ))
+                        s.getScoredAt() != null ? s.getScoredAt().toString() : null))
                 .toList();
 
         int todayScore = scoringService.getTodayScores(userId);
@@ -61,8 +59,7 @@ public class ScoreController {
                 todayScore,
                 user.getEffectiveStreak(),
                 user.getBestStreak(),
-                0
-        ));
+                0));
     }
 
     @GetMapping("/me/daily")
@@ -79,11 +76,17 @@ public class ScoreController {
                 total,
                 0,
                 50,
-                total >= 50
-        ));
+                total >= 50));
     }
 
-    public record RecentScoreResponse(String id, int points, String source, String commitHash, String repositoryName, String scoredAt) {}
-    public record ScoreSummaryResponse(List<RecentScoreResponse> recentScores, int totalScore, int todayScore, int currentStreak, int bestStreak, int streakBonus) {}
-    public record DailyScoreResponse(int totalPoints, int commitCount, int dailyCap, boolean capped) {}
+    public record RecentScoreResponse(String id, int points, String source, String commitHash, String repositoryName,
+            String scoredAt) {
+    }
+
+    public record ScoreSummaryResponse(List<RecentScoreResponse> recentScores, int totalScore, int todayScore,
+            int currentStreak, int bestStreak, int streakBonus) {
+    }
+
+    public record DailyScoreResponse(int totalPoints, int commitCount, int dailyCap, boolean capped) {
+    }
 }

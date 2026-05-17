@@ -1,23 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Switch, Alert, Platform } from 'react-native';
 import { useTheme, useStyles } from '../src/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Card } from '../src/components/ui/Card';
+import { useAuthStore } from '../src/features/auth/store/authStore';
 
 export default function PrivacyScreen() {
   const router = useRouter();
   const theme = useTheme();
   const s = useStyles(styles);
+  const { deleteAccount } = useAuthStore();
 
   const [privateProfile, setPrivateProfile] = useState(false);
   const [showCode, setShowCode] = useState(true);
 
-  const handleDeleteAccount = () => {
-    Alert.alert('Delete Account', 'Are you sure you want to permanently delete your account? This action cannot be undone.', [
+  const handleDeleteAccount = async () => {
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you sure you want to permanently delete your account? All your scores and squads will be removed. This action cannot be undone.')) {
+        try {
+          await deleteAccount();
+          router.replace('/(auth)/login');
+        } catch (e: any) {
+          Alert.alert('Error', e.message);
+        }
+      }
+      return;
+    }
+
+    Alert.alert('Delete Account', 'Are you sure you want to permanently delete your account? All your scores and squads will be removed. This action cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => Alert.alert('Error', 'Account deletion requires email verification first.') }
+      { text: 'Delete', style: 'destructive', onPress: async () => {
+        try {
+          await deleteAccount();
+          router.replace('/(auth)/login');
+        } catch (e: any) {
+          Alert.alert('Error', e.message);
+        }
+      }}
     ]);
   };
 
@@ -76,15 +97,6 @@ export default function PrivacyScreen() {
 
           <Text style={[s.sectionTitle, { marginTop: 16 }]}>Security</Text>
           <Card variant="glass" style={s.settingsCard}>
-            <TouchableOpacity style={s.settingRow} onPress={() => Alert.alert('Password', 'Password reset email sent.')}>
-              <View style={s.settingLeft}>
-                <View style={[s.settingIcon, { backgroundColor: 'rgba(245, 158, 11, 0.15)' }]}>
-                  <Ionicons name="key" size={20} color={theme.colors.warning} />
-                </View>
-                <Text style={s.settingText}>Change Password</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={theme.colors.textMuted} />
-            </TouchableOpacity>
             <View style={s.settingDivider} />
             <TouchableOpacity style={s.settingRow} onPress={handleDeleteAccount}>
               <View style={s.settingLeft}>

@@ -69,7 +69,7 @@ public class LeagueService {
         
         for (LeagueGroup group : activeGroups) {
             List<User> members = userRepository.findAll().stream()
-                    .filter(u -> group.getId().equals(u.getActiveLeagueGroupId()))
+                    .filter(u -> group.getId().equals(u.getActiveLeagueGroupId()) && u.getDeletedAt() == null)
                     .toList();
                     
             if (members.isEmpty()) {

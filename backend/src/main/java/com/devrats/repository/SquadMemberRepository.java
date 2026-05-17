@@ -20,4 +20,8 @@ public interface SquadMemberRepository extends JpaRepository<SquadMember, SquadM
     @Modifying
     @Query("DELETE FROM SquadMember sm WHERE sm.squad.id = :squadId")
     void deleteBySquadId(String squadId);
+
+    @Modifying
+    @Query("DELETE FROM SquadMember sm WHERE sm.user.id = :userId")
+    void deleteByUserId(String userId);
 }

@@ -3,7 +3,7 @@ import { storage } from '../../../lib/storage';
 import api from '../../../lib/api';
 
 interface User { id: string; username: string; displayName: string; avatarUrl: string | null; totalScore: number; currentStreak: number; bestStreak: number; league?: string; }
-interface AuthState { user: User | null; isAuthenticated: boolean; isLoading: boolean; error: string | null; login: (code: string) => Promise<void>; logout: () => Promise<void>; loadSession: () => Promise<void>; fetchProfile: () => Promise<void>; }
+interface AuthState { user: User | null; isAuthenticated: boolean; isLoading: boolean; error: string | null; login: (code: string) => Promise<void>; logout: () => Promise<void>; deleteAccount: () => Promise<void>; loadSession: () => Promise<void>; fetchProfile: () => Promise<void>; }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null, isAuthenticated: false, isLoading: true, error: null,
@@ -13,6 +13,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     catch (e: any) { set({ error: e.message || 'Login failed', isLoading: false }); }
   },
   logout: async () => { try { await api.delete('/auth/logout'); } catch {} await storage.deleteItemAsync('accessToken'); await storage.deleteItemAsync('refreshToken'); set({ user: null, isAuthenticated: false, isLoading: false }); },
+  deleteAccount: async () => {
+    try {
+      await api.delete('/auth/me');
+      await storage.deleteItemAsync('accessToken');
+      await storage.deleteItemAsync('refreshToken');
+      set({ user: null, isAuthenticated: false, isLoading: false });
+    } catch (e: any) {
+      throw new Error(e.response?.data?.error || 'Failed to delete account');
+    }
+  },
   loadSession: async () => { try { const token = await storage.getItemAsync('accessToken'); if (!token) { set({ isLoading: false }); return; } await get().fetchProfile(); } catch { set({ isLoading: false }); } },
   fetchProfile: async () => { 
     try { 

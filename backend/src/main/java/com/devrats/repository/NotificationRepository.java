@@ -14,4 +14,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
 
     /** Verifica se já existe uma notificação do tipo informado para o usuário a partir de um instante. */
     boolean existsByUserIdAndTypeAndCreatedAtGreaterThanEqual(String userId, String type, Instant since);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Notification n WHERE n.userId = :userId")
+    void deleteByUserId(String userId);
 }

@@ -2,14 +2,20 @@ package com.devrats.service;
 
 import com.devrats.model.RefreshToken;
 import com.devrats.model.User;
+import com.devrats.model.Squad;
 import com.devrats.repository.RefreshTokenRepository;
 import com.devrats.repository.UserRepository;
+import com.devrats.repository.ScoreRepository;
+import com.devrats.repository.NotificationRepository;
+import com.devrats.repository.SquadMemberRepository;
+import com.devrats.repository.SquadRepository;
 import com.devrats.security.JwtProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,12 +24,32 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
     private final LeagueService leagueService;
+    private final ScoreRepository scoreRepository;
+    private final NotificationRepository notificationRepository;
+    private final SquadMemberRepository squadMemberRepository;
+    private final SquadRepository squadRepository;
 
-    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider, LeagueService leagueService) {
+    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider, LeagueService leagueService, ScoreRepository scoreRepository, NotificationRepository notificationRepository, SquadMemberRepository squadMemberRepository, SquadRepository squadRepository) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtProvider = jwtProvider;
         this.leagueService = leagueService;
+        this.scoreRepository = scoreRepository;
+        this.notificationRepository = notificationRepository;
+        this.squadMemberRepository = squadMemberRepository;
+        this.squadRepository = squadRepository;
+    }
+
+    @Transactional
+    public void deleteAccount(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // 1. Soft delete the user
+        user.setDeletedAt(Instant.now());
+        userRepository.save(user);
+
+        // 2. Delete refresh tokens to force immediate logout across all devices
+        refreshTokenRepository.deleteByUserId(userId);
     }
 
     @Transactional
@@ -37,6 +63,10 @@ public class AuthService {
             user.setDisplayName(displayName);
             user.setAvatarUrl(avatarUrl);
             user.setEmail(email);
+            user = userRepository.save(user);
+        } else if (user.getDeletedAt() != null) {
+            // Restore soft-deleted account
+            user.setDeletedAt(null);
             user = userRepository.save(user);
         }
 
@@ -75,6 +105,14 @@ public class AuthService {
             return null;
         }
         String userId = stored.getUserId();
+        
+        // Check if user is soft-deleted
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null || user.getDeletedAt() != null) {
+            refreshTokenRepository.delete(stored);
+            return null;
+        }
+        
         refreshTokenRepository.delete(stored);
 
         String newAccess = jwtProvider.generateAccessToken(userId);
@@ -92,7 +130,7 @@ public class AuthService {
 
     public UserProfile getProfile(String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
+        if (user == null || user.getDeletedAt() != null) {
             return null;
         }
         return new UserProfile(

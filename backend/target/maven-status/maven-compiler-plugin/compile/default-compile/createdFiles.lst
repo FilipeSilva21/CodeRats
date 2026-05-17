@@ -5,6 +5,7 @@ com\devrats\controller\LeaderboardController.class
 com\devrats\repository\RefreshTokenRepository.class
 com\devrats\service\SquadService$SquadMemberResponse.class
 com\devrats\controller\NotificationController.class
+com\devrats\service\AccountCleanupService.class
 com\devrats\service\WebhookService.class
 com\devrats\service\WeeklyReportService.class
 com\devrats\service\GitHubApiClient.class

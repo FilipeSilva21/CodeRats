@@ -38,7 +38,7 @@ public class LeaderboardService {
         LeagueGroup group = leagueGroupRepository.findById(groupId).orElse(null);
         
         List<User> groupMembers = userRepository.findAll().stream()
-                .filter(u -> groupId.equals(u.getActiveLeagueGroupId()))
+                .filter(u -> groupId.equals(u.getActiveLeagueGroupId()) && u.getDeletedAt() == null)
                 .toList();
 
         List<LeaderboardEntry> leaderboard = new ArrayList<>();
