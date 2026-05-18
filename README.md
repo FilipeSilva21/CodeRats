@@ -29,7 +29,7 @@ CodeRats/
 │       ├── components/ui/          # Sistema de design (Botão, Card, Badge, Avatar)
 │       ├── features/               # Stores Zustand (auth, scoring, squad)
 │       ├── lib/                    # Cliente de API, hook de WebSocket
-│       └── theme/                  # Tema cyberpunk escuro
+│       └── theme/                  # Tema Clean Modern (Claro/Escuro)
 │
 └── spec.md           # Especificação do projeto
 ```
@@ -68,8 +68,7 @@ docker-compose up -d
 
 ```bash
 cd backend
-./gradlew run       # Linux/Mac
-.\gradlew.bat run   # Windows
+mvn spring-boot:run
 ```
 
 A API estará disponível em `http://localhost:8080`.  
@@ -79,7 +78,7 @@ Verificação de saúde: `GET http://localhost:8080/api/health`
 
 ```bash
 cd mobile
-npm install --legacy-peer-deps
+npm install
 npx expo start
 ```
 
@@ -168,16 +167,16 @@ Pressione `w` para abrir no navegador, ou escaneie o código QR com o Expo Go.
 - **Arquitetura baseada em recursos (Feature-based)** — cada domínio (auth, scoring, squad) é independente
 - **Ecossistema Spring** — Arquitetura orientada a serviços com injeção de dependência
 - **Zustand stores** — gerenciamento de estado leve baseado em hooks
-- **Tokens de design** — tema centralizado para uma interface de modo escuro consistente
+- **Tokens de design** — tema centralizado (Clean Modern) com suporte dinâmico para modos claro e escuro
 
 ### Comandos Úteis
 
 ```bash
 # Backend: apenas compilar (sem executar)
-cd backend && .\gradlew.bat compileKotlin
+cd backend && mvn compile
 
 # Backend: limpeza e build
-cd backend && .\gradlew.bat clean build
+cd backend && mvn clean package
 
 # Frontend: corrigir versões de dependência
 cd mobile && npx expo install --fix
@@ -191,4 +190,3 @@ cd backend && docker-compose down -v && docker-compose up -d
 ## 📝 Licença
 
 Este projeto é privado e proprietário.
-
