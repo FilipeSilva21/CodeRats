@@ -12,7 +12,7 @@ O "DevRats" é uma plataforma gamificada para desenvolvedores, inspirada na din�
 
 A aplicação será multiplataforma, compartilhando a mesma base de código para Web e Mobile.
 
-* **Front-end (Cross-platform):** Ionic com Angular *ou* React Native com Expo (Web + Mobile).
+* **Front-end (Cross-platform):** React Native com Expo (Web + Mobile).
 * **Back-end (API Restful):** Java com Spring Boot.
 * **Comunicação em Tempo Real:** WebSockets (Spring WebSocket) para atualização instantânea dos placares.
 

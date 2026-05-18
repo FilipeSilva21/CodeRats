@@ -1,70 +1,70 @@
 # 🐀 DevRats
 
-> **Commit. Compete. Conquer.**
+> **Commit. Compete. Conquiste.**
 
-DevRats is a gamified development platform that tracks GitHub activity and turns coding into a competitive game. Developers earn points for commits, compete in squads, and climb leaderboards — all with anti-cheat protection.
+DevRats é uma plataforma de desenvolvimento gamificada que monitora a atividade no GitHub e transforma a programação em um jogo competitivo. Desenvolvedores ganham pontos por commits, competem em squads (equipes) e sobem nos rankings — tudo com proteção anti-trapaça.
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Arquitetura
 
 ```
 CodeRats/
-├── backend/          # Java + Spring Boot API (port 8080)
+├── backend/          # Java + Spring Boot API (porta 8080)
 │   ├── src/main/java/com/devrats/
-│   │   ├── DevRatsApplication.java # Entry point
-│   │   ├── controller/             # REST Controllers
-│   │   ├── service/                # Business Logic (Scoring, Auth, Squad)
-│   │   ├── model/                  # JPA Entities
-│   │   ├── repository/             # Spring Data Repositories
-│   │   ├── security/               # HMAC & Security Filters
-│   │   └── websocket/              # Real-time WebSockets
+│   │   ├── DevRatsApplication.java # Ponto de entrada
+│   │   ├── controller/             # Controllers REST
+│   │   ├── service/                # Lógica de Negócio (Pontuação, Autenticação, Squad)
+│   │   ├── model/                  # Entidades JPA
+│   │   ├── repository/             # Repositórios Spring Data
+│   │   ├── security/               # HMAC & Filtros de Segurança
+│   │   └── websocket/              # WebSockets em tempo real
 │   └── docker-compose.yml          # PostgreSQL 16
 │
-├── mobile/           # React Native + Expo (port 8081)
-│   ├── app/                        # Expo Router (file-based routing)
-│   │   ├── (auth)/login.tsx        # GitHub login screen
-│   │   └── (tabs)/                 # Home, Squad, Leaderboard, Profile
+├── mobile/           # React Native + Expo (porta 8081)
+│   ├── app/                        # Expo Router (roteamento baseado em arquivos)
+│   │   ├── (auth)/login.tsx        # Tela de login do GitHub
+│   │   └── (tabs)/                 # Início, Squad, Ranking, Perfil
 │   └── src/
-│       ├── components/ui/          # Design system (Button, Card, Badge, Avatar)
-│       ├── features/               # Zustand stores (auth, scoring, squad)
-│       ├── lib/                    # API client, WebSocket hook
-│       └── theme/                  # Dark cyberpunk theme
+│       ├── components/ui/          # Sistema de design (Botão, Card, Badge, Avatar)
+│       ├── features/               # Stores Zustand (auth, scoring, squad)
+│       ├── lib/                    # Cliente de API, hook de WebSocket
+│       └── theme/                  # Tema cyberpunk escuro
 │
-└── spec.md           # Project specification
+└── spec.md           # Especificação do projeto
 ```
 
-## 🛠️ Tech Stack
+## 🛠️ Tecnologias
 
-| Layer      | Technology                         |
+| Camada     | Tecnologia                         |
 |------------|------------------------------------|
 | **Backend**    | Java 21, Spring Boot 3.x, Spring Data JPA |
-| **Frontend**   | React Native, Expo SDK 54, Expo Router |
-| **Database**   | PostgreSQL 16 (Docker)            |
-| **Auth**       | GitHub OAuth 2.0, JWT             |
+| **Frontend**   | React Native, Expo SDK 54, Expo Router (Web + Mobile) |
+| **Banco de Dados**   | PostgreSQL 16 (Docker)            |
+| **Autenticação**       | GitHub OAuth 2.0, JWT             |
 | **DI**         | Spring IoC                        |
-| **Real-time**  | Spring WebSockets                 |
-| **State**      | Zustand                           |
-| **HTTP Client**| Axios (with JWT auto-refresh)     |
+| **Tempo Real**  | Spring WebSockets                 |
+| **Estado**      | Zustand                           |
+| **Cliente HTTP**| Axios (com atualização automática de JWT) |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Primeiros Passos
 
-### Prerequisites
+### Pré-requisitos
 
 - **JDK 21+** — [Download](https://adoptium.net/)
 - **Node.js 20+** — [Download](https://nodejs.org/)
 - **Docker Desktop** — [Download](https://www.docker.com/products/docker-desktop/)
 
-### 1. Start the Database
+### 1. Iniciar o Banco de Dados
 
 ```bash
 cd backend
 docker-compose up -d
 ```
 
-### 2. Run the Backend
+### 2. Executar o Backend
 
 ```bash
 cd backend
@@ -72,10 +72,10 @@ cd backend
 .\gradlew.bat run   # Windows
 ```
 
-The API will be available at `http://localhost:8080`.  
-Health check: `GET http://localhost:8080/api/health`
+A API estará disponível em `http://localhost:8080`.  
+Verificação de saúde: `GET http://localhost:8080/api/health`
 
-### 3. Run the Frontend
+### 3. Executar o Frontend
 
 ```bash
 cd mobile
@@ -83,111 +83,112 @@ npm install --legacy-peer-deps
 npx expo start
 ```
 
-Press `w` to open in browser, or scan the QR code with Expo Go.
+Pressione `w` para abrir no navegador, ou escaneie o código QR com o Expo Go.
 
 ---
 
-## 📡 API Endpoints
+## 📡 Endpoints da API
 
-### Auth
-| Method | Endpoint             | Auth  | Description           |
+### Autenticação
+| Método | Endpoint             | Autenticação | Descrição             |
 |--------|----------------------|-------|-----------------------|
-| POST   | `/api/auth/refresh`  | No    | Refresh access token  |
-| GET    | `/api/auth/me`       | JWT   | Get current user      |
+| POST   | `/api/auth/refresh`  | Não    | Atualizar token de acesso |
+| GET    | `/api/auth/me`       | JWT   | Obter usuário atual      |
 | DELETE | `/api/auth/logout`   | JWT   | Logout                |
 
 ### Webhooks
-| Method | Endpoint               | Auth  | Description           |
+| Método | Endpoint               | Autenticação | Descrição             |
 |--------|------------------------|-------|-----------------------|
-| POST   | `/api/webhooks/github` | HMAC  | GitHub push events    |
+| POST   | `/api/webhooks/github` | HMAC  | Eventos de push do GitHub |
 
-### Scoring
-| Method | Endpoint               | Auth  | Description           |
+### Pontuação
+| Método | Endpoint               | Autenticação | Descrição             |
 |--------|------------------------|-------|-----------------------|
-| GET    | `/api/scores/me`       | JWT   | Score summary         |
-| GET    | `/api/scores/me/daily` | JWT   | Daily progress        |
+| GET    | `/api/scores/me`       | JWT   | Resumo de pontuação   |
+| GET    | `/api/scores/me/daily` | JWT   | Progresso diário      |
 
-### Squads
-| Method | Endpoint              | Auth  | Description           |
+### Squads (Equipes)
+| Método | Endpoint              | Autenticação | Descrição             |
 |--------|-----------------------|-------|-----------------------|
-| GET    | `/api/squads/my`      | JWT   | List my squads        |
-| GET    | `/api/squads/:id`     | JWT   | Squad details         |
-| POST   | `/api/squads`         | JWT   | Create squad          |
-| POST   | `/api/squads/join`    | JWT   | Join by invite code   |
+| GET    | `/api/squads/my`      | JWT   | Listar minhas squads  |
+| GET    | `/api/squads/:id`     | JWT   | Detalhes da squad     |
+| POST   | `/api/squads`         | JWT   | Criar squad           |
+| POST   | `/api/squads/join`    | JWT   | Entrar por código de convite |
 
-### Leaderboard
-| Method | Endpoint                   | Auth  | Description           |
+### Ranking (Leaderboard)
+| Método | Endpoint                   | Autenticação | Descrição             |
 |--------|----------------------------|-------|-----------------------|
-| GET    | `/api/leaderboard/global`  | No    | Global ranking        |
-| WS     | `/leaderboard/:squadId`    | No    | Real-time updates     |
+| GET    | `/api/leaderboard/global`  | Não    | Ranking global        |
+| WS     | `/leaderboard/:squadId`    | Não    | Atualizações em tempo real |
 
 ---
 
-## 🎮 Scoring Rules
+## 🎮 Regras de Pontuação
 
-| Rule                    | Details                                      |
+| Regra                   | Detalhes                                     |
 |-------------------------|----------------------------------------------|
-| **Base points**         | 10 pts per valid commit                      |
-| **Markdown penalty**    | 2 pts for commits with only `.md` files      |
-| **Daily cap**           | 200 pts maximum per day                      |
-| **Anti-cheat filters**  | Empty commits, merge commits, no-file-change |
-| **Duplicate detection** | Commits are scored only once (by hash)       |
+| **Pontos base**         | 10 pts por commit válido                     |
+| **Penalidade Markdown** | 2 pts para commits apenas com arquivos `.md` |
+| **Limite diário**       | Máximo de 200 pts por dia                    |
+| **Filtros anti-trapaça**| Commits vazios, merge commits, sem alteração de arquivos |
+| **Detecção de duplicata**| Commits são pontuados apenas uma vez (por hash) |
 
 ---
 
-## 🔐 Environment Variables
+## 🔐 Variáveis de Ambiente
 
-| Variable               | Description                  | Default            |
+| Variável               | Descrição                    | Padrão             |
 |------------------------|------------------------------|--------------------|
-| `PORT`                 | Server port                  | `8080`             |
-| `DATABASE_URL`         | PostgreSQL JDBC URL          | `localhost:5432`   |
-| `DATABASE_USER`        | Database user                | `postgres`         |
-| `DATABASE_PASSWORD`    | Database password            | `devrats123`       |
-| `GITHUB_CLIENT_ID`     | GitHub App Client ID         | —                  |
-| `GITHUB_CLIENT_SECRET` | GitHub App Client Secret     | —                  |
-| `GITHUB_WEBHOOK_SECRET`| Webhook signature secret     | —                  |
+| `PORT`                 | Porta do servidor            | `8080`             |
+| `DATABASE_URL`         | URL JDBC do PostgreSQL       | `localhost:5432`   |
+| `DATABASE_USER`        | Usuário do banco de dados    | `postgres`         |
+| `DATABASE_PASSWORD`    | Senha do banco de dados      | `devrats123`       |
+| `GITHUB_CLIENT_ID`     | Client ID do GitHub App      | —                  |
+| `GITHUB_CLIENT_SECRET` | Client Secret do GitHub App  | —                  |
+| `GITHUB_WEBHOOK_SECRET`| Segredo de assinatura do webhook | —                  |
 
 ---
 
-## 📱 Mobile Screens
+## 📱 Telas do Mobile
 
-| Screen        | Description                                     |
+| Tela          | Descrição                                       |
 |---------------|-------------------------------------------------|
-| **Login**     | GitHub OAuth with branding and feature highlights |
-| **Home**      | Score dashboard, daily progress, streak stats    |
-| **Squad**     | Create/join squads, view member leaderboard      |
-| **Leaderboard** | Global ranking with medal system              |
-| **Profile**   | User stats, GitHub integration status, sign out  |
+| **Login**     | OAuth do GitHub com branding e destaques de recursos |
+| **Home**      | Dashboard de pontos, progresso diário, estatísticas de sequência (streak) |
+| **Squad**     | Criar/entrar em squads, ver ranking dos membros |
+| **Ranking**   | Ranking global com sistema de medalhas         |
+| **Perfil**    | Estatísticas do usuário, status da integração com GitHub, sair |
 
 ---
 
-## 🧑‍💻 Development
+## 🧑‍💻 Desenvolvimento
 
-### Project Structure Philosophy
+### Filosofia da Estrutura do Projeto
 
-- **Feature-based architecture** — each domain (auth, scoring, squad) is self-contained
-- **Spring Ecosystem** — Service-oriented architecture with dependency injection
-- **Zustand stores** — lightweight, hook-based state management
-- **Design tokens** — centralized theme for consistent dark-mode UI
+- **Arquitetura baseada em recursos (Feature-based)** — cada domínio (auth, scoring, squad) é independente
+- **Ecossistema Spring** — Arquitetura orientada a serviços com injeção de dependência
+- **Zustand stores** — gerenciamento de estado leve baseado em hooks
+- **Tokens de design** — tema centralizado para uma interface de modo escuro consistente
 
-### Useful Commands
+### Comandos Úteis
 
 ```bash
-# Backend: compile only (no run)
+# Backend: apenas compilar (sem executar)
 cd backend && .\gradlew.bat compileKotlin
 
-# Backend: clean build
+# Backend: limpeza e build
 cd backend && .\gradlew.bat clean build
 
-# Frontend: fix dependency versions
+# Frontend: corrigir versões de dependência
 cd mobile && npx expo install --fix
 
-# Database: reset
+# Banco de Dados: resetar
 cd backend && docker-compose down -v && docker-compose up -d
 ```
 
 ---
 
-## 📝 License
+## 📝 Licença
 
-This project is private and proprietary.
+Este projeto é privado e proprietário.
+
