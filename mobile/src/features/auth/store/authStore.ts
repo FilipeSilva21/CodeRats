@@ -29,7 +29,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data } = await api.get('/auth/me'); 
       set({ user: data, isAuthenticated: true, isLoading: false }); 
     } catch (e: any) { 
-      console.error('Fetch profile failed:', e.response?.data || e.message);
+      if (e.response?.status !== 401) {
+        console.error('Fetch profile failed:', e.response?.data || e.message);
+      }
       set({ user: null, isAuthenticated: false, isLoading: false }); 
     } 
   },

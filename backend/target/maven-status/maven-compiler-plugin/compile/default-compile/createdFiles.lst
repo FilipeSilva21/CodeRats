@@ -4,6 +4,7 @@ com\devrats\service\NotificationService$NotificationResponse.class
 com\devrats\controller\LeaderboardController.class
 com\devrats\repository\RefreshTokenRepository.class
 com\devrats\service\SquadService$SquadMemberResponse.class
+com\devrats\service\CommitReminderService.class
 com\devrats\controller\NotificationController.class
 com\devrats\service\AccountCleanupService.class
 com\devrats\service\WebhookService.class
@@ -11,6 +12,7 @@ com\devrats\service\WeeklyReportService.class
 com\devrats\service\GitHubApiClient.class
 com\devrats\model\WebhookPayload$InstallationRef.class
 com\devrats\repository\SquadMemberRepository.class
+com\devrats\controller\NotificationController$PreferencesRequest.class
 com\devrats\service\GitHubApiClient$GitHubUser.class
 com\devrats\model\WebhookPayload$CommitData.class
 com\devrats\model\Notification.class
@@ -24,13 +26,17 @@ com\devrats\model\User.class
 com\devrats\model\Score.class
 com\devrats\model\WebhookPayload.class
 com\devrats\service\AuthService.class
+com\devrats\service\NotificationService$NotificationPreferences.class
+com\devrats\repository\LeagueGroupRepository.class
 com\devrats\service\SquadService.class
 com\devrats\model\RefreshToken.class
 com\devrats\model\Squad.class
+com\devrats\model\LeagueGroup.class
 com\devrats\controller\ScoreController$ScoreSummaryResponse.class
 com\devrats\controller\ScoreController.class
 com\devrats\service\EmailService.class
 com\devrats\service\AuthService$AuthResponse.class
+com\devrats\service\LeagueService.class
 com\devrats\security\HmacValidator.class
 com\devrats\service\NotificationService.class
 com\devrats\model\SquadMemberId.class
