@@ -54,10 +54,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   appWrapper: {
     flex: 1,
-    width: '100%',
     maxWidth: 600,
-    alignSelf: 'center',
-    paddingTop: 40,
-    paddingBottom: 5
+    width: "100%",
+    paddingBottom: 20
   }
 });

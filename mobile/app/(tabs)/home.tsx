@@ -47,10 +47,12 @@ export default function HomeScreen() {
               <Text style={s.greeting}>Welcome back,</Text>
               <Text style={s.name}>{user?.displayName || 'Developer'}</Text>
             </View>
-            <View style={s.avatarContainer}>
-              <Avatar uri={user?.avatarUrl || null} name={user?.displayName || 'U'} size={56} />
-              <View style={s.onlineIndicator} />
-            </View>
+            <Link href="/(tabs)/profile" asChild>
+              <TouchableOpacity style={s.avatarContainer} activeOpacity={0.7}>
+                <Avatar uri={user?.avatarUrl || null} name={user?.displayName || 'U'} size={56} />
+                <View style={s.onlineIndicator} />
+              </TouchableOpacity>
+            </Link>
           </View>
 
           <Card style={s.mainCard}>
