@@ -52,14 +52,19 @@ export default function LeaderboardScreen() {
           const isThird = idx === 2;
           const isCurrentUser = user.userId === currentUser?.id;
 
+          let customBorderColor = theme.colors.accent;
+          if (isFirst) customBorderColor = '#D4AF37';
+          else if (isSecond) customBorderColor = '#C0C0C0';
+          else if (isThird) customBorderColor = '#CD7F32';
+
           let podiumHeight = isFirst ? 140 : isSecond ? 110 : 90;
 
           return (
             <View key={user.userId || `podium-${idx}`} style={s.podiumCol}>
-              <View style={[s.podiumAvatar, isCurrentUser && s.podiumCurrentUserAvatar]}>
+              <View style={[s.podiumAvatar, isCurrentUser && [s.podiumCurrentUserAvatar, { borderColor: customBorderColor }]]}>
                 <Avatar uri={user.avatarUrl} name={user.displayName} size={isFirst ? 80 : 64} />
               </View>
-              <Text style={[s.podiumName, isCurrentUser && { color: theme.colors.accent }]} numberOfLines={1}>
+              <Text style={[s.podiumName, isCurrentUser && { color: '#fff' }]} numberOfLines={1}>
                 {isCurrentUser ? 'You' : user.displayName}
               </Text>
               <Text style={s.podiumScore}>{user.totalScore.toLocaleString()}</Text>

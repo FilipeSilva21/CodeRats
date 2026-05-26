@@ -3,7 +3,6 @@ package com.devrats.service;
 import com.devrats.model.User;
 import com.devrats.repository.ScoreRepository;
 import com.devrats.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -59,8 +57,7 @@ class LeaderboardServiceTest {
                 .thenReturn(List.of(
                         Map.of("userId", 1L, "totalScore", 500),
                         Map.of("userId", 2L, "totalScore", 300),
-                        Map.of("userId", 3L, "totalScore", 100)
-                ));
+                        Map.of("userId", 3L, "totalScore", 100)));
 
         List<?> leaderboard = leaderboardService.getGlobalLeaderboard();
 
