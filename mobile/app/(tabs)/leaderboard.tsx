@@ -16,7 +16,7 @@ export default function LeaderboardScreen() {
   const { user: currentUser } = useAuthStore();
   const theme = useTheme();
   const s = useStyles(styles);
-  
+
   const [showLeagueModal, setShowLeagueModal] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function LeaderboardScreen() {
 
   const currentLeague = currentUser?.league || 'BRONZE';
   const currentTierObj = tiers.find(t => t.name === currentLeague) || { name: currentLeague, color: theme.colors.accent };
-  
+
   const totalUsers = users.length;
   const promotionCount = 5;
   const demotionCount = 5;
@@ -125,8 +125,8 @@ export default function LeaderboardScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={s.header}>
           <Text style={s.pageTitle}>Leaderboard</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={s.leagueIndicator}
             onPress={() => setShowLeagueModal(true)}
             activeOpacity={0.7}
@@ -158,16 +158,16 @@ export default function LeaderboardScreen() {
         )}
       </SafeAreaView>
 
-      <Modal visible={showLeagueModal} transparent animationType="slide">
-        <View style={s.modalOverlay}>
-          <View style={s.modalContent}>
+      <Modal visible={showLeagueModal} transparent animationType="slide" onRequestClose={() => setShowLeagueModal(false)}>
+        <TouchableOpacity style={s.modalOverlay} activeOpacity={1} onPress={() => setShowLeagueModal(false)}>
+          <View style={s.modalContent} onStartShouldSetResponder={() => true}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <Text style={s.modalTitle}>Leagues</Text>
               <TouchableOpacity onPress={() => setShowLeagueModal(false)}>
                 <Ionicons name="close" size={24} color={theme.colors.textMuted} />
               </TouchableOpacity>
             </View>
-            
+
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 24 }}>
               {tiers.map((tier, idx) => {
                 const isCurrent = tier.name === currentLeague;
@@ -190,7 +190,7 @@ export default function LeaderboardScreen() {
               })}
             </ScrollView>
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
@@ -228,7 +228,7 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   scoreContainer: { alignItems: 'flex-end' },
   score: { color: theme.colors.text, fontSize: 14, fontWeight: '800' as const },
   xpLabel: { color: theme.colors.textMuted, fontSize: 9, fontWeight: '700' as const, marginTop: 1 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.0)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: theme.colors.background, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '80%' },
   modalTitle: { color: theme.colors.text, fontSize: 20, fontWeight: '900' as const, letterSpacing: -0.5 },
   tierRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12, backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1 },

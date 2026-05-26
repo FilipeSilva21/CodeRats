@@ -10,6 +10,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 
+const PODIUM_HIGHLIGHTS = [
+  { borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.10)', rankLabel: '#1', rankTextColor: '#3E2F00' },
+  { borderColor: '#C0C0C0', backgroundColor: 'rgba(192, 192, 192, 0.10)', rankLabel: '#2', rankTextColor: '#2A2A2A' },
+  { borderColor: '#CD7F32', backgroundColor: 'rgba(205, 127, 50, 0.10)', rankLabel: '#3', rankTextColor: '#2F1600' },
+];
+
 export default function SquadScreen() {
   const { squads, currentSquad, members, isLoading, fetchMySquads, createSquad, joinSquad, fetchSquadDetails, clearCurrentSquad, updateSquad, leaveSquad, deleteSquad } = useSquadStore();
   const { user } = useAuthStore();
@@ -228,8 +234,27 @@ export default function SquadScreen() {
               
               <View style={s.membersList}>
                 {members.map((item, index) => (
-                  <View key={item.userId} style={[s.memberRow, index === members.length - 1 && { borderBottomWidth: 0 }]}>
+                  <View
+                    key={item.userId}
+                    style={[
+                      s.memberRow,
+                      index < PODIUM_HIGHLIGHTS.length
+                        ? s.podiumMemberRow
+                        : index === members.length - 1 && { borderBottomWidth: 0 },
+                      index < PODIUM_HIGHLIGHTS.length && {
+                        borderColor: PODIUM_HIGHLIGHTS[index].borderColor,
+                        backgroundColor: PODIUM_HIGHLIGHTS[index].backgroundColor,
+                      },
+                    ]}
+                  >
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                      {index < PODIUM_HIGHLIGHTS.length && (
+                        <View style={[s.podiumBadge, { backgroundColor: PODIUM_HIGHLIGHTS[index].borderColor }]}>
+                          <Text style={[s.podiumBadgeText, { color: PODIUM_HIGHLIGHTS[index].rankTextColor }]}>
+                            {PODIUM_HIGHLIGHTS[index].rankLabel}
+                          </Text>
+                        </View>
+                      )}
                       {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={{ width: 44, height: 44, borderRadius: 22 }} /> : <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }} />}
                       <View>
                         <Text style={{ color: theme.colors.text, fontWeight: '700', fontSize: 16 }}>{item.displayName}</Text>
@@ -377,10 +402,13 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   squadCodeSmall: { color: theme.colors.textMuted, fontSize: 11, fontFamily: 'monospace', fontWeight: '600' as const },
   memberBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 10, borderLeftWidth: 1, borderLeftColor: theme.colors.border },
   memberCount: { color: theme.colors.text, fontWeight: '700' as const, fontSize: 12 },
-  membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' as const },
+  membersList: { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border, gap: 10 },
   memberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+  podiumMemberRow: { borderWidth: 2, borderRadius: theme.borderRadius.md, borderBottomWidth: 2 },
+  podiumBadge: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  podiumBadgeText: { fontSize: 13, fontWeight: '900' as const, letterSpacing: 0.3 },
   scorePill: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border },
   dividerContainer: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 8 },
   dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.border },
   dividerText: { color: theme.colors.textMuted, fontSize: 11, fontWeight: '800' as const }
-});
+} as any);

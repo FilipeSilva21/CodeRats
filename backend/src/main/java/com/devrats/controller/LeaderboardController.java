@@ -25,17 +25,17 @@ public class LeaderboardController {
     }
 
     @GetMapping("/global")
-    public ResponseEntity<List<LeaderboardService.LeaderboardEntry>> globalLeaderboard(
+    public ResponseEntity<?> globalLeaderboard(
             @RequestParam(defaultValue = "50") int limit,
             @RequestParam(required = false) String league) {
             
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()) && auth.getPrincipal() instanceof String userId) {
+            // Authenticated: return group leaderboard
+            return ResponseEntity.ok(leaderboardService.getGroupLeaderboard(userId));
         }
-        String userId = (String) auth.getPrincipal();
-
-        return ResponseEntity.ok(leaderboardService.getGroupLeaderboard(userId));
+        // Public: return global leaderboard
+        return ResponseEntity.ok(leaderboardService.getGlobalLeaderboard());
     }
     
     @GetMapping("/tiers")

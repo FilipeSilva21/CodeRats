@@ -16,8 +16,30 @@ public class HmacValidator {
         this.secret = secret;
     }
 
-    public boolean isValid(byte[] payload, String signatureHeader) {
-        if (signatureHeader == null || !signatureHeader.startsWith("sha256=")) {
+    /**
+     * Validate HMAC-SHA256 signature using String payload.
+     * Rejects null/empty payloads and null/empty/malformed signatures.
+     */
+    public boolean isValid(String payload, String signatureHeader) {
+        if (payload == null || payload.isEmpty()) {
+            return false;
+        }
+        return isValidBytes(payload.getBytes(StandardCharsets.UTF_8), signatureHeader);
+    }
+
+    /**
+     * Validate HMAC-SHA256 signature using raw byte[] payload.
+     * This is the core validation method used by the webhook controller.
+     */
+    public boolean isValidPayload(byte[] payload, String signatureHeader) {
+        if (payload == null || payload.length == 0) {
+            return false;
+        }
+        return isValidBytes(payload, signatureHeader);
+    }
+
+    private boolean isValidBytes(byte[] payload, String signatureHeader) {
+        if (signatureHeader == null || signatureHeader.isEmpty() || !signatureHeader.startsWith("sha256=")) {
             System.out.println("[DEBUG HMAC] Signature header is null or doesn't start with sha256=");
             return false;
         }

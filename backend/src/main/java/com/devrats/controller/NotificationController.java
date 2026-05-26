@@ -51,6 +51,39 @@ public class NotificationController {
         return ResponseEntity.ok(Map.of("status", "ok"));
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> clearAllNotifications() {
+        String userId = getUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid token"));
+        }
+
+        notificationService.clearAllNotifications(userId);
+        return ResponseEntity.ok(Map.of("status", "ok"));
+    }
+
+    @PostMapping("/push-token")
+    public ResponseEntity<?> registerPushToken(@RequestBody PushTokenRequest body) {
+        String userId = getUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid token"));
+        }
+
+        notificationService.updateExpoPushToken(userId, body.token());
+        return ResponseEntity.ok(Map.of("status", "ok"));
+    }
+
+    @DeleteMapping("/push-token")
+    public ResponseEntity<?> clearPushToken() {
+        String userId = getUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid token"));
+        }
+
+        notificationService.updateExpoPushToken(userId, null);
+        return ResponseEntity.ok(Map.of("status", "ok"));
+    }
+
     // ─────────────────────────────────────────────────────────────
     // Preferências de notificação
     // ─────────────────────────────────────────────────────────────
@@ -88,4 +121,5 @@ public class NotificationController {
     }
 
     public record PreferencesRequest(Boolean pushEnabled, Boolean emailWeekly, Boolean squadAlerts) {}
+    public record PushTokenRequest(String token) {}
 }

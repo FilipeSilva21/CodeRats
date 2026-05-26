@@ -128,4 +128,4 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   settingText: { color: theme.colors.text, fontSize: 16, fontWeight: '600' as const, marginBottom: 2 },
   settingSub: { color: theme.colors.textSecondary, fontSize: 13 },
   settingDivider: { height: 1, backgroundColor: theme.colors.glassBorder, marginLeft: 64 },
-});
+} as any);

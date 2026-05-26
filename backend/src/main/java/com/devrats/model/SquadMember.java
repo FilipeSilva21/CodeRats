@@ -19,11 +19,13 @@ public class SquadMember {
     @ManyToOne
     @MapsId("squadId")
     @JoinColumn(name = "squad_id")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Squad squad;
 
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private User user;
 
     @Column(length = 20, nullable = false)

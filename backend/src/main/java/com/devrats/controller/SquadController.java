@@ -51,7 +51,7 @@ public class SquadController {
         }
     }
 
-    @GetMapping("/me")
+    @GetMapping({"/me", "/my"})
     public ResponseEntity<List<SquadService.SquadResponse>> mySquads() {
         String userId = getUserId();
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

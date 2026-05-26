@@ -1,3 +1,6 @@
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
 import api from './api';
 
 export interface Notification {
@@ -15,40 +18,94 @@ export interface NotificationPreferences {
   squadAlerts: boolean;
 }
 
+if (Platform.OS !== 'web') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+}
+
+const getProjectId = () => {
+  const constants = Constants as any;
+  return Constants.expoConfig?.extra?.eas?.projectId ?? constants.easConfig?.projectId;
+};
+
+const requestExpoPushToken = async (): Promise<string | null> => {
+  if (Platform.OS === 'web') return null;
+
+  try {
+    const currentPermission = await Notifications.getPermissionsAsync();
+    let finalStatus = currentPermission.status;
+
+    if (finalStatus !== 'granted') {
+      const requestedPermission = await Notifications.requestPermissionsAsync();
+      finalStatus = requestedPermission.status;
+    }
+
+    if (finalStatus !== 'granted') return null;
+
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default',
+        importance: Notifications.AndroidImportance.DEFAULT,
+      });
+    }
+
+    const projectId = getProjectId();
+    const token = projectId
+      ? await Notifications.getExpoPushTokenAsync({ projectId })
+      : await Notifications.getExpoPushTokenAsync();
+
+    return token.data;
+  } catch (error) {
+    console.warn('Failed to register for push notifications:', error);
+    return null;
+  }
+};
+
 export const notificationsService = {
   getNotifications: async (): Promise<Notification[]> => {
-    try {
-      const response = await api.get('/notifications');
-      return response.data.data;
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
-      return [];
-    }
+    const response = await api.get('/notifications');
+    return response.data.data;
   },
 
   markAsRead: async (id: string): Promise<void> => {
-    try {
-      await api.post(`/notifications/${id}/read`);
-    } catch (error) {
-      console.error('Failed to mark notification as read:', error);
-    }
+    await api.post(`/notifications/${id}/read`);
+  },
+
+  clearAll: async (): Promise<void> => {
+    await api.delete('/notifications');
   },
 
   getPreferences: async (): Promise<NotificationPreferences> => {
-    try {
-      const response = await api.get('/notifications/preferences');
-      return response.data.data;
-    } catch (error) {
-      console.error('Failed to fetch notification preferences:', error);
-      return { pushEnabled: true, emailWeekly: false, squadAlerts: true };
-    }
+    const response = await api.get('/notifications/preferences');
+    return response.data.data;
   },
 
   updatePreferences: async (prefs: Partial<NotificationPreferences>): Promise<void> => {
-    try {
-      await api.put('/notifications/preferences', prefs);
-    } catch (error) {
-      console.error('Failed to update notification preferences:', error);
+    await api.put('/notifications/preferences', prefs);
+  },
+
+  registerDeviceForPushNotifications: async (): Promise<string | null> => {
+    const token = await requestExpoPushToken();
+    if (token) await api.post('/notifications/push-token', { token });
+    return token;
+  },
+
+  syncPushTokenIfEnabled: async (): Promise<string | null> => {
+    const prefs = await notificationsService.getPreferences();
+    if (!prefs.pushEnabled) {
+      await notificationsService.clearPushToken();
+      return null;
     }
+    return notificationsService.registerDeviceForPushNotifications();
+  },
+
+  clearPushToken: async (): Promise<void> => {
+    await api.delete('/notifications/push-token');
   },
 };

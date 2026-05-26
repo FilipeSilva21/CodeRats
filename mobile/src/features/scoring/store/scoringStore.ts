@@ -5,6 +5,7 @@ interface ScoringState {
   totalScore: number;
   todayScore: number;
   dailyCap: number;
+  capped: boolean;
   currentStreak: number;
   bestStreak: number;
   streakBonus: number | null;
@@ -18,6 +19,7 @@ export const useScoringStore = create<ScoringState>((set, get) => ({
   totalScore: 0,
   todayScore: 0,
   dailyCap: 50,
+  capped: false,
   currentStreak: 0,
   bestStreak: 0,
   streakBonus: null,

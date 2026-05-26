@@ -31,8 +31,20 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/webhooks/**", "/leaderboard/**").permitAll()
+                // Public endpoints (no auth required)
+                .requestMatchers("/api/auth/github/**", "/api/auth/refresh").permitAll()
+                .requestMatchers("/api/webhooks/**").permitAll()
+                .requestMatchers("/api/leaderboard/global", "/api/leaderboard/tiers").permitAll()
+                .requestMatchers("/leaderboard/**").permitAll()
+                // All other endpoints require authentication
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Unauthorized\"}");
+                })
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -11,7 +11,7 @@ import java.time.Instant;
 public class Score {
     @Id
     @Column(length = 36)
-    private String id;
+    private String id = java.util.UUID.randomUUID().toString();
 
     @Column(name = "user_id", length = 36, nullable = false)
     private String userId;

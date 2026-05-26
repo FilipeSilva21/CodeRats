@@ -88,6 +88,7 @@ public class AuthService {
                 new UserProfile(
                         user.getId(),
                         user.getUsername(),
+                        user.getGithubUsername(),
                         user.getDisplayName(),
                         user.getAvatarUrl(),
                         user.getTotalScore(),
@@ -136,6 +137,7 @@ public class AuthService {
         return new UserProfile(
                 user.getId(),
                 user.getUsername(),
+                user.getGithubUsername(),
                 user.getDisplayName(),
                 user.getAvatarUrl(),
                 user.getTotalScore(),
@@ -147,5 +149,5 @@ public class AuthService {
 
     public record AuthResponse(String accessToken, String refreshToken, UserProfile user) {}
     public record TokenRefreshResponse(String accessToken, String refreshToken) {}
-    public record UserProfile(String id, String username, String displayName, String avatarUrl, Integer totalScore, Integer currentStreak, Integer bestStreak, String league) {}
+    public record UserProfile(String id, String username, String githubUsername, String displayName, String avatarUrl, Integer totalScore, Integer currentStreak, Integer bestStreak, String league) {}
 }

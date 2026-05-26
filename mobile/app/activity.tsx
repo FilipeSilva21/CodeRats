@@ -72,4 +72,4 @@ const styles = (theme: ReturnType<typeof useTheme>) => ({
   activityPoints: { color: theme.colors.primary, fontSize: 13, fontWeight: '800' as const },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40, gap: 12 },
   emptyText: { color: theme.colors.textSecondary, fontSize: 15, fontWeight: '600' as const }
-});
+} as any);

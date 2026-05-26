@@ -44,6 +44,7 @@ public class WeeklyReportService {
         logger.info("Starting Weekly Report Generation (Spring Scheduled)...");
 
         List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getDeletedAt() == null)
                 .filter(u -> u.getEmail() != null && !u.getEmail().isBlank())
                 .filter(u -> Boolean.TRUE.equals(u.getNotifEmailWeekly()))
                 .toList();

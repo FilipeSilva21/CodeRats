@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -26,6 +26,7 @@ import java.util.List;
 @Service
 public class CommitReminderService {
     private static final Logger logger = LoggerFactory.getLogger(CommitReminderService.class);
+    private static final ZoneId BRT_ZONE = ZoneId.of("America/Sao_Paulo");
 
     /** 6 mensagens de lembrete rotativas — selecionadas por (dayOfYear % 6). */
     private static final String[] REMINDER_MESSAGES = {
@@ -57,25 +58,26 @@ public class CommitReminderService {
      * Cron usa UTC, portanto os horários em UTC são: 17h, 20h, 23h e 02h.
      */
     @Schedules({
-        @Scheduled(cron = "0 0 17 * * *"),  // 14h BRT
-        @Scheduled(cron = "0 0 20 * * *"),  // 17h BRT
-        @Scheduled(cron = "0 0 23 * * *"),  // 20h BRT
-        @Scheduled(cron = "0 0 2 * * *")    // 23h BRT (02h UTC do dia seguinte)
+        @Scheduled(cron = "0 0 14 * * *", zone = "America/Sao_Paulo"),
+        @Scheduled(cron = "0 0 17 * * *", zone = "America/Sao_Paulo"),
+        @Scheduled(cron = "0 0 20 * * *", zone = "America/Sao_Paulo"),
+        @Scheduled(cron = "0 0 23 * * *", zone = "America/Sao_Paulo")
     })
     @Transactional
     public void sendCommitReminders() {
         logger.info("CommitReminderService: iniciando verificação de reminders...");
 
         // Início do dia em UTC (equivale ao início do dia BRT para o mesmo dia)
-        Instant startOfToday = LocalDate.now(ZoneOffset.ofHours(-3))
-                .atStartOfDay(ZoneOffset.UTC)
+        Instant startOfToday = LocalDate.now(BRT_ZONE)
+                .atStartOfDay(BRT_ZONE)
                 .toInstant();
 
         // Selecionar a mensagem pelo índice do dia (rotação entre as 6)
-        int dayOfYear = LocalDate.now(ZoneOffset.ofHours(-3)).getDayOfYear();
+        int dayOfYear = LocalDate.now(BRT_ZONE).getDayOfYear();
         String message = REMINDER_MESSAGES[dayOfYear % REMINDER_MESSAGES.length];
 
         List<User> eligibleUsers = userRepository.findAll().stream()
+                .filter(u -> u.getDeletedAt() == null)
                 .filter(u -> Boolean.TRUE.equals(u.getNotifPushEnabled()))
                 .toList();
 

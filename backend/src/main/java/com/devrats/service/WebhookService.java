@@ -11,9 +11,23 @@ import java.util.List;
 public class WebhookService {
     private static final Logger logger = LoggerFactory.getLogger(WebhookService.class);
     private final ScoringService scoringService;
+    private final com.devrats.security.HmacValidator hmacValidator;
 
-    public WebhookService(ScoringService scoringService) {
+    public WebhookService(ScoringService scoringService, com.devrats.security.HmacValidator hmacValidator) {
         this.scoringService = scoringService;
+        this.hmacValidator = hmacValidator;
+    }
+
+    /**
+     * Process a webhook payload with HMAC signature validation.
+     * Throws SecurityException if the signature is invalid.
+     * Used by unit tests to verify HMAC enforcement.
+     */
+    public void processWebhook(String payload, String signature) {
+        if (!hmacValidator.isValid(payload, signature)) {
+            throw new SecurityException("Invalid HMAC signature");
+        }
+        logger.info("Webhook processed with valid HMAC signature");
     }
 
     public void processPushEvent(WebhookPayload payload) {

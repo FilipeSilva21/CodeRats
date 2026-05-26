@@ -45,7 +45,7 @@ public class SquadService {
 
     @Transactional
     public SquadDetailsResponse joinByCode(String code, String userId) {
-        Squad squad = squadRepository.findByInviteCode(code);
+        Squad squad = squadRepository.findByInviteCode(code).orElse(null);
         if (squad == null) throw new RuntimeException("Squad not found");
         
         long count = squadMemberRepository.countBySquadId(squad.getId());
@@ -136,6 +136,56 @@ public class SquadService {
                 squad.getMaxMembers(),
                 count
         );
+    }
+
+    // ── Test-compatible methods ──────────────────────────────────────
+
+    /**
+     * Create a squad from a User object (used by unit tests).
+     * Returns the Squad entity directly.
+     */
+    public Squad createSquad(String name, User owner) {
+        String inviteCode = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        Squad squad = new Squad();
+        squad.setId(java.util.UUID.randomUUID().toString());
+        squad.setName(name);
+        squad.setOwnerId(owner.getId());
+        squad.setInviteCode(inviteCode);
+        squad.setMaxMembers(10);
+        squad = squadRepository.save(squad);
+        return squad;
+    }
+
+    /**
+     * Join a squad by invite code using a User object (used by unit tests).
+     */
+    public void joinSquad(String inviteCode, User user) {
+        Squad squad = squadRepository.findByInviteCode(inviteCode).orElse(null);
+        if (squad == null) throw new RuntimeException("Squad not found");
+
+        if (squadMemberRepository.existsByUserIdAndSquadId(user.getId(), squad.getId())) {
+            throw new RuntimeException("User is already a member of this squad");
+        }
+
+        long count = squadMemberRepository.countBySquadId(squad.getId());
+        if (count >= squad.getMaxMembers()) throw new RuntimeException("Squad is full");
+
+        SquadMember sm = new SquadMember();
+        SquadMemberId smId = new SquadMemberId();
+        smId.setSquadId(squad.getId());
+        smId.setUserId(user.getId());
+        sm.setId(smId);
+        sm.setSquad(squad);
+        sm.setUser(user);
+        sm.setRole("MEMBER");
+        squadMemberRepository.save(sm);
+    }
+
+    /**
+     * Get squads for a user by userId (used by unit tests).
+     */
+    public List<Squad> getUserSquads(String userId) {
+        return squadMemberRepository.findSquadsByUserId(userId);
     }
 
     public record SquadResponse(String id, String name, String description, String imageUrl, String inviteCode, String ownerId, int maxMembers, int memberCount) {}

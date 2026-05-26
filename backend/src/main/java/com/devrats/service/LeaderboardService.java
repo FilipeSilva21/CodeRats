@@ -75,5 +75,13 @@ public class LeaderboardService {
         return leaderboard;
     }
 
+    /**
+     * Get the global leaderboard (all users sorted by total score).
+     * Used by unit tests and global ranking endpoint.
+     */
+    public List<?> getGlobalLeaderboard() {
+        return scoreRepository.findTopUsersByTotalScore();
+    }
+
     public record LeaderboardEntry(int rank, String userId, String username, String displayName, String avatarUrl, int totalScore, int currentStreak, String league) {}
 }

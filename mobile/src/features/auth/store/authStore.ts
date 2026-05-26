@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { storage } from '../../../lib/storage';
 import api from '../../../lib/api';
+import { notificationsService } from '../../../lib/notifications';
 
 interface User { id: string; username: string; displayName: string; avatarUrl: string | null; totalScore: number; currentStreak: number; bestStreak: number; league?: string; }
 interface AuthState { user: User | null; isAuthenticated: boolean; isLoading: boolean; error: string | null; login: (code: string) => Promise<void>; logout: () => Promise<void>; deleteAccount: () => Promise<void>; loadSession: () => Promise<void>; fetchProfile: () => Promise<void>; }
@@ -12,9 +13,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try { const { data } = await api.get(`/auth/github/callback?code=${code}`); await storage.setItemAsync('accessToken', data.accessToken); await storage.setItemAsync('refreshToken', data.refreshToken); set({ user: data.user, isAuthenticated: true, isLoading: false }); }
     catch (e: any) { set({ error: e.message || 'Login failed', isLoading: false }); }
   },
-  logout: async () => { try { await api.delete('/auth/logout'); } catch {} await storage.deleteItemAsync('accessToken'); await storage.deleteItemAsync('refreshToken'); set({ user: null, isAuthenticated: false, isLoading: false }); },
+  logout: async () => { try { await notificationsService.clearPushToken(); } catch {} try { await api.delete('/auth/logout'); } catch {} await storage.deleteItemAsync('accessToken'); await storage.deleteItemAsync('refreshToken'); set({ user: null, isAuthenticated: false, isLoading: false }); },
   deleteAccount: async () => {
     try {
+      try { await notificationsService.clearPushToken(); } catch {}
       await api.delete('/auth/me');
       await storage.deleteItemAsync('accessToken');
       await storage.deleteItemAsync('refreshToken');

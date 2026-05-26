@@ -5,6 +5,7 @@ import { View, StyleSheet, LogBox } from 'react-native';
 import { useAuthStore } from '../src/features/auth/store/authStore';
 import { useTheme } from '../src/theme';
 import { useThemeStore } from '../src/theme/themeStore';
+import { notificationsService } from '../src/lib/notifications';
 
 LogBox.ignoreLogs([
   '"shadow*" style props are deprecated. Use "boxShadow".',
@@ -20,6 +21,13 @@ export default function RootLayout() {
   const { themeMode } = useThemeStore();
 
   useEffect(() => { loadSession(); }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated || isLoading) return;
+    notificationsService.syncPushTokenIfEnabled().catch((error) => {
+      console.warn('Push notification sync failed:', error);
+    });
+  }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
 

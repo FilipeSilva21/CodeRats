@@ -45,6 +45,7 @@ com\devrats\controller\ScoreController$DailyScoreResponse.class
 com\devrats\service\SquadService$SquadResponse.class
 com\devrats\controller\AuthController.class
 com\devrats\service\ScoringService.class
+com\devrats\controller\NotificationController$PushTokenRequest.class
 com\devrats\security\SecurityConfig.class
 com\devrats\service\LeaderboardService$LeaderboardEntry.class
 com\devrats\controller\ScoreController$RecentScoreResponse.class

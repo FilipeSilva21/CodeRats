@@ -75,9 +75,8 @@ public class ScoreController {
         return ResponseEntity.ok(new DailyScoreResponse(
                 total,
                 0,
-                50,
-                total >= 50));
-    }
+                200,
+                total >= 200));    }
 
     public record RecentScoreResponse(String id, int points, String source, String commitHash, String repositoryName,
             String scoredAt) {

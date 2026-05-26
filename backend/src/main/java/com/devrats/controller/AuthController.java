@@ -108,7 +108,7 @@ public class AuthController {
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout() {
         // Token revocation would go here if tracked
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/me")

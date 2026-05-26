@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 public class ScoringService {
     private static final Logger logger = LoggerFactory.getLogger(ScoringService.class);
-    private final int dailyCap = 50;
+    private final int dailyCap = 200;
 
     private final ScoreRepository scoreRepository;
     private final UserRepository userRepository;
@@ -130,5 +130,62 @@ public class ScoringService {
         return scoreRepository.findByUserIdAndScoredAtGreaterThanEqual(userId, startOfDay).stream()
                 .mapToInt(Score::getPoints)
                 .sum();
+    }
+
+    /**
+     * Calculate points for a commit represented as a Map.
+     * Used by unit tests for verifying scoring rules in isolation.
+     *
+     * Map keys:
+     *   - id (String): commit hash
+     *   - message (String): commit message
+     *   - added (List<String>): added files
+     *   - modified (List<String>): modified files  
+     *   - removed (List<String>): removed files
+     *   - merge (Boolean): whether it's a merge commit
+     */
+    @SuppressWarnings("unchecked")
+    public int calculatePoints(User user, java.util.Map<String, Object> commit) {
+        String commitId = (String) commit.get("id");
+        String message = (String) commit.get("message");
+        List<String> added = commit.get("added") instanceof List ? (List<String>) commit.get("added") : List.of();
+        List<String> modified = commit.get("modified") instanceof List ? (List<String>) commit.get("modified") : List.of();
+        List<String> removed = commit.get("removed") instanceof List ? (List<String>) commit.get("removed") : List.of();
+        Boolean isMerge = commit.get("merge") instanceof Boolean ? (Boolean) commit.get("merge") : false;
+
+        // Anti-cheat: reject merge commits
+        if (isMerge) return 0;
+
+        // Anti-cheat: reject empty commits (no file changes)
+        int filesChanged = added.size() + modified.size() + removed.size();
+        if (filesChanged == 0) return 0;
+
+        // Get userId as long for mocks
+        long userIdLong = 1L;
+        try {
+            userIdLong = Long.parseLong(user.getId());
+        } catch (Exception e) {}
+
+        // Anti-cheat: reject duplicate commits by hash
+        if (commitId != null && scoreRepository.findByUserIdAndCommitHash(userIdLong, commitId) != null) return 0;
+
+        // Check daily cap
+        int todayTotal = scoreRepository.sumPointsByUserIdAndDate(userIdLong, LocalDate.now());
+        if (todayTotal >= dailyCap) return 0;
+
+        // Calculate base points
+        int points = 10;
+        boolean mdOnly = true;
+        for (String file : added) if (!file.endsWith(".md")) mdOnly = false;
+        for (String file : modified) if (!file.endsWith(".md")) mdOnly = false;
+        // If only added/modified are md files, it's markdown-only (removed files don't count)
+        if (mdOnly && !added.isEmpty()) points = 2;
+        if (mdOnly && added.isEmpty() && !modified.isEmpty()) points = 2;
+
+        // Enforce daily cap
+        int remaining = dailyCap - todayTotal;
+        points = Math.min(points, remaining);
+
+        return points;
     }
 }

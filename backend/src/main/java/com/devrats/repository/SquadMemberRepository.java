@@ -17,6 +17,19 @@ public interface SquadMemberRepository extends JpaRepository<SquadMember, SquadM
     int countBySquadId(String squadId);
     Optional<SquadMember> findBySquadIdAndUserId(String squadId, String userId);
 
+    /**
+     * Check if a user is already a member of a squad.
+     */
+    default boolean existsByUserIdAndSquadId(String userId, String squadId) {
+        return findBySquadIdAndUserId(squadId, userId).isPresent();
+    }
+
+    /**
+     * Find all squads a user belongs to.
+     */
+    @Query("SELECT sm.squad FROM SquadMember sm WHERE sm.user.id = :userId")
+    List<com.devrats.model.Squad> findSquadsByUserId(String userId);
+
     @Modifying
     @Query("DELETE FROM SquadMember sm WHERE sm.squad.id = :squadId")
     void deleteBySquadId(String squadId);

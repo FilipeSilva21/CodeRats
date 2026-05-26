@@ -7,6 +7,7 @@ import java.util.List;
 
 @Repository
 public interface SquadRepository extends JpaRepository<Squad, String> {
-    Squad findByInviteCode(String inviteCode);
+    java.util.Optional<Squad> findByInviteCode(String inviteCode);
+
     List<Squad> findByOwnerId(String ownerId);
 }

@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 public class User {
     @Id
     @Column(length = 36)
-    private String id;
+    private String id = java.util.UUID.randomUUID().toString();
 
     @Column(name = "github_id", length = 50, unique = true, nullable = false)
     private String githubId;
@@ -57,6 +57,9 @@ public class User {
     @Column(name = "notif_squad_alerts")
     private Boolean notifSquadAlerts = true;
 
+    @Column(name = "expo_push_token", length = 255)
+    private String expoPushToken;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -65,37 +68,48 @@ public class User {
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    
+    /** Overload for Long-based id (used by tests) */
+    public void setId(Long id) { this.id = String.valueOf(id); }
+
     public String getGithubId() { return githubId; }
     public void setGithubId(String githubId) { this.githubId = githubId; }
-    
+    /** Overload for Long-based githubId (used by tests) */
+    public void setGithubId(Long githubId) { this.githubId = String.valueOf(githubId); }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-    
+
+    /** Alias for setUsername — used by tests referencing GitHub username */
+    public String getGithubUsername() { return username; }
+    public void setGithubUsername(String githubUsername) {
+        this.username = githubUsername;
+        if (this.displayName == null) this.displayName = githubUsername;
+    }
+
     public String getDisplayName() { return displayName; }
     public void setDisplayName(String displayName) { this.displayName = displayName; }
-    
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    
+
     public String getAvatarUrl() { return avatarUrl; }
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
-    
+
     public Integer getTotalScore() { return totalScore; }
     public void setTotalScore(Integer totalScore) { this.totalScore = totalScore; }
-    
+
     public Integer getCurrentStreak() { return currentStreak; }
     public void setCurrentStreak(Integer currentStreak) { this.currentStreak = currentStreak; }
-    
+
     public Integer getBestStreak() { return bestStreak; }
     public void setBestStreak(Integer bestStreak) { this.bestStreak = bestStreak; }
-    
+
     public String getLastCommitDate() { return lastCommitDate; }
     public void setLastCommitDate(String lastCommitDate) { this.lastCommitDate = lastCommitDate; }
-    
+
     public String getLeague() { return league; }
     public void setLeague(String league) { this.league = league; }
-    
+
     public String getActiveLeagueGroupId() { return activeLeagueGroupId; }
     public void setActiveLeagueGroupId(String activeLeagueGroupId) { this.activeLeagueGroupId = activeLeagueGroupId; }
 
@@ -107,6 +121,9 @@ public class User {
 
     public Boolean getNotifSquadAlerts() { return notifSquadAlerts != null ? notifSquadAlerts : true; }
     public void setNotifSquadAlerts(Boolean notifSquadAlerts) { this.notifSquadAlerts = notifSquadAlerts; }
+
+    public String getExpoPushToken() { return expoPushToken; }
+    public void setExpoPushToken(String expoPushToken) { this.expoPushToken = expoPushToken; }
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

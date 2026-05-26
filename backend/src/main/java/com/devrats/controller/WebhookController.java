@@ -28,7 +28,7 @@ public class WebhookController {
         this.objectMapper = objectMapper;
     }
 
-    @PostMapping("/github")
+    @RequestMapping(value = "/github", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> handleGithubWebhook(
             jakarta.servlet.http.HttpServletRequest request,
             @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
@@ -38,9 +38,17 @@ public class WebhookController {
             byte[] rawBody = request.getInputStream().readAllBytes();
             logger.info("Received GitHub Webhook Event: {}. Body length: {} bytes", event, rawBody.length);
 
-            if (signature == null || !hmacValidator.isValid(rawBody, signature)) {
+            if (rawBody == null || rawBody.length == 0) {
+                logger.warn("Webhook signature validation failed! Body is empty");
+                if ("GET".equalsIgnoreCase(request.getMethod())) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Empty payload"));
+                }
+                return ResponseEntity.badRequest().body(Map.of("error", "Empty payload"));
+            }
+
+            if (signature == null || !hmacValidator.isValidPayload(rawBody, signature)) {
                 logger.warn("Webhook signature validation failed! Signature header: {}", signature);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid signature");
             }
 
             String body = new String(rawBody, StandardCharsets.UTF_8);
