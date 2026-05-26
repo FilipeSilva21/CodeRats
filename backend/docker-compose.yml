@@ -1,7 +1,8 @@
+name: DevRats
 services:
   db:
     image: postgres:16-alpine
-    container_name: devrats-db
+    container_name: devrats
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: devrats123

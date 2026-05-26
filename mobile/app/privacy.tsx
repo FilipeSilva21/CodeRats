@@ -7,15 +7,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Card } from '../src/components/ui/Card';
 import { useAuthStore } from '../src/features/auth/store/authStore';
+import { useSettingsStore } from '../src/features/settings/store/settingsStore';
 
 export default function PrivacyScreen() {
   const router = useRouter();
   const theme = useTheme();
   const s = useStyles(styles);
   const { deleteAccount } = useAuthStore();
+  const { commitPrivacy, setCommitPrivacy } = useSettingsStore();
 
   const [privateProfile, setPrivateProfile] = useState(false);
-  const [showCode, setShowCode] = useState(true);
 
   const handleDeleteAccount = async () => {
     if (Platform.OS === 'web') {
@@ -83,13 +84,13 @@ export default function PrivacyScreen() {
                   <Ionicons name="code-working" size={20} color={theme.colors.success} />
                 </View>
                 <View>
-                  <Text style={s.settingText}>Show Commits</Text>
-                  <Text style={s.settingSub}>Show recent commit hashes</Text>
+                  <Text style={s.settingText}>Commit Privacy</Text>
+                  <Text style={s.settingSub}>Hide repository name and commit hash</Text>
                 </View>
               </View>
               <Switch 
-                value={showCode} 
-                onValueChange={setShowCode}
+                value={commitPrivacy} 
+                onValueChange={setCommitPrivacy}
                 trackColor={{ false: theme.colors.surface, true: theme.colors.success }}
                 thumbColor="#fff"
               />

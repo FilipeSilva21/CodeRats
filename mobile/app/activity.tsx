@@ -6,10 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useScoringStore } from '../src/features/scoring/store/scoringStore';
+import { useSettingsStore } from '../src/features/settings/store/settingsStore';
 
 export default function ActivityScreen() {
   const router = useRouter();
   const { recentScores } = useScoringStore();
+  const { commitPrivacy } = useSettingsStore();
   const theme = useTheme();
   const s = useStyles(styles);
 
@@ -41,8 +43,12 @@ export default function ActivityScreen() {
                     <Ionicons name="git-commit-outline" size={20} color={theme.colors.primary} />
                   </LinearGradient>
                   <View>
-                    <Text style={s.activityTitle}>Commit Pushed</Text>
-                    <Text style={s.activitySub}>{new Date(score.scoredAt).toLocaleDateString()} • {score.commitHash?.substring(0, 7)}</Text>
+                    <Text style={s.activityTitle}>
+                      Commit Pushed {!commitPrivacy && score.repositoryName ? `- ${score.repositoryName.split('/').pop()}` : ''}
+                    </Text>
+                    <Text style={s.activitySub}>
+                      {new Date(score.scoredAt).toLocaleDateString()} {!commitPrivacy && score.commitHash ? `• ${score.commitHash.substring(0, 7)}` : ''}
+                    </Text>
                   </View>
                 </View>
                 <View style={s.pointsPill}>

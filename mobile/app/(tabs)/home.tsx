@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { useScoringStore } from '../../src/features/scoring/store/scoringStore';
+import { useSettingsStore } from '../../src/features/settings/store/settingsStore';
 import { Card } from '../../src/components/ui/Card';
 import { Avatar } from '../../src/components/ui/Avatar';
 import { useTheme, useStyles } from '../../src/theme';
@@ -13,6 +14,7 @@ import { Link } from 'expo-router';
 export default function HomeScreen() {
   const { user } = useAuthStore();
   const { totalScore, todayScore, dailyCap, recentScores, fetchScoreSummary, fetchDailyProgress, isLoading } = useScoringStore();
+  const { commitPrivacy } = useSettingsStore();
   const theme = useTheme();
   const s = useStyles(styles);
 
@@ -124,10 +126,10 @@ export default function HomeScreen() {
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={s.activityTitle} numberOfLines={1}>
-                        Commit Pushed {score.repositoryName ? `- ${score.repositoryName.split('/').pop()}` : ''}
+                        Commit Pushed {!commitPrivacy && score.repositoryName ? `- ${score.repositoryName.split('/').pop()}` : ''}
                       </Text>
                       <Text style={s.activitySub} numberOfLines={1}>
-                        {new Date(score.scoredAt).toLocaleDateString()} {score.commitHash ? `• ${score.commitHash.substring(0, 7)}` : ''}
+                        {new Date(score.scoredAt).toLocaleDateString()} {!commitPrivacy && score.commitHash ? `• ${score.commitHash.substring(0, 7)}` : ''}
                       </Text>
                     </View>
                   </View>
