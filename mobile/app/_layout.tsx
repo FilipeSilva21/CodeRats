@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Slot, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, LogBox } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuthStore } from '../src/features/auth/store/authStore';
 import { useTheme } from '../src/theme';
 import { useThemeStore } from '../src/theme/themeStore';
@@ -49,12 +50,14 @@ export default function RootLayout() {
   const isLight = themeMode === 'light' || theme.colors.background === '#FFFFFF';
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <StatusBar style={isLight ? 'dark' : 'light'} />
-      <View style={styles.appWrapper}>
-        <Slot />
+    <SafeAreaProvider>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <StatusBar style={isLight ? 'dark' : 'light'} />
+        <View style={styles.appWrapper}>
+          <Slot />
+        </View>
       </View>
-    </View>
+    </SafeAreaProvider>
   );
 }
 
@@ -64,6 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: 600,
     width: "100%",
+    alignSelf: 'center',
     paddingBottom: 20
   }
 });

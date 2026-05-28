@@ -93,13 +93,17 @@ public class SquadController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateSquad(@PathVariable String id, @RequestBody Map<String, String> body) {
+    @PostMapping(value = "/{id}/update", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateSquad(
+            @PathVariable String id, 
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "image", required = false) org.springframework.web.multipart.MultipartFile image) {
         String userId = getUserId();
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         
         try {
-            return ResponseEntity.ok(squadService.updateSquad(id, userId, body.get("name"), body.get("description"), body.get("imageUrl")));
+            return ResponseEntity.ok(squadService.updateSquad(id, userId, name, description, image));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

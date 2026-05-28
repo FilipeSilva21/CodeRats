@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/webhooks/**").permitAll()
                 .requestMatchers("/api/leaderboard/global", "/api/leaderboard/tiers").permitAll()
                 .requestMatchers("/leaderboard/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )

@@ -14,6 +14,7 @@ com\devrats\model\WebhookPayload$InstallationRef.class
 com\devrats\repository\SquadMemberRepository.class
 com\devrats\controller\NotificationController$PreferencesRequest.class
 com\devrats\service\GitHubApiClient$GitHubUser.class
+com\devrats\config\WebConfig.class
 com\devrats\model\WebhookPayload$CommitData.class
 com\devrats\model\Notification.class
 com\devrats\controller\SquadController.class

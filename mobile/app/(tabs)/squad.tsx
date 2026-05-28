@@ -9,12 +9,19 @@ import { useAuthStore } from '../../src/features/auth/store/authStore';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
+import { BACKEND_URL } from '../../src/config';
 
 const PODIUM_HIGHLIGHTS = [
   { borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.10)', rankLabel: '#1', rankTextColor: '#3E2F00' },
   { borderColor: '#C0C0C0', backgroundColor: 'rgba(192, 192, 192, 0.10)', rankLabel: '#2', rankTextColor: '#2A2A2A' },
   { borderColor: '#CD7F32', backgroundColor: 'rgba(205, 127, 50, 0.10)', rankLabel: '#3', rankTextColor: '#2F1600' },
 ];
+
+const getImageUrl = (url?: string | null) => {
+  if (!url) return undefined;
+  if (url.startsWith('/')) return `${BACKEND_URL}${url}`;
+  return url;
+};
 
 export default function SquadScreen() {
   const { squads, currentSquad, members, isLoading, fetchMySquads, createSquad, joinSquad, fetchSquadDetails, clearCurrentSquad, updateSquad, leaveSquad, deleteSquad } = useSquadStore();
@@ -39,15 +46,15 @@ export default function SquadScreen() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.2, // Low quality to keep base64 small
-      base64: true,
+      quality: 0.8,
+      base64: false,
     });
 
-    if (!result.canceled && result.assets[0].base64) {
-      setEditImg("data:image/jpeg;base64," + result.assets[0].base64);
+    if (!result.canceled && result.assets[0].uri) {
+      setEditImg(result.assets[0].uri);
     }
   };
 
@@ -177,8 +184,17 @@ export default function SquadScreen() {
                 <TextInput style={[s.input, { height: 100, textAlignVertical: 'top' }]} value={editDesc} onChangeText={setEditDesc} placeholder="Description" placeholderTextColor={theme.colors.textMuted} multiline />
               </View>
               <View>
-                <Text style={s.inputLabel}>Image URL</Text>
-                <TextInput style={s.input} value={editImg} onChangeText={setEditImg} placeholder="https://..." placeholderTextColor={theme.colors.textMuted} autoCapitalize="none" />
+                <Text style={s.inputLabel}>Squad Image</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                  {editImg ? (
+                    <Image source={{ uri: getImageUrl(editImg) }} style={{ width: 64, height: 64, borderRadius: theme.borderRadius.md }} />
+                  ) : (
+                    <View style={{ width: 64, height: 64, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center', justifyContent: 'center' }}>
+                      <Ionicons name="image-outline" size={24} color={theme.colors.textMuted} />
+                    </View>
+                  )}
+                  <Button title={editImg ? "Change Image" : "Upload Image"} onPress={pickImage} variant="secondary" />
+                </View>
               </View>
               <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
                 <Button title="Cancel" onPress={() => setEditMode(false)} variant="secondary" style={{ flex: 1 }} />
@@ -191,7 +207,7 @@ export default function SquadScreen() {
               <Card style={s.squadDetailCard}>
                 <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center', marginBottom: 20 }}>
                   {currentSquad.imageUrl ? (
-                    <Image source={{ uri: currentSquad.imageUrl }} style={{ width: 80, height: 80, borderRadius: theme.borderRadius.md }} />
+                    <Image source={{ uri: getImageUrl(currentSquad.imageUrl) }} style={{ width: 80, height: 80, borderRadius: theme.borderRadius.md }} />
                   ) : (
                     <View style={{ width: 80, height: 80, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }}>
                       <Ionicons name="people" size={32} color={theme.colors.textMuted} />
@@ -355,7 +371,7 @@ export default function SquadScreen() {
                     <Card style={s.squadCard}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, flex: 1 }}>
                         {item.imageUrl ? (
-                          <Image source={{ uri: item.imageUrl }} style={{ width: 48, height: 48, borderRadius: theme.borderRadius.md }} />
+                          <Image source={{ uri: getImageUrl(item.imageUrl) }} style={{ width: 48, height: 48, borderRadius: theme.borderRadius.md }} />
                         ) : (
                           <View style={{ width: 48, height: 48, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border }}>
                             <Ionicons name="people" size={20} color={theme.colors.textMuted} />

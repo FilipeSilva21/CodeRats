@@ -99,14 +99,39 @@ public class SquadService {
     }
 
     @Transactional
-    public SquadResponse updateSquad(String squadId, String userId, String name, String description, String imageUrl) {
+    public SquadResponse updateSquad(String squadId, String userId, String name, String description, org.springframework.web.multipart.MultipartFile image) {
         Squad squad = squadRepository.findById(squadId).orElseThrow(() -> new RuntimeException("Squad not found"));
         if (!squad.getOwnerId().equals(userId)) {
             throw new RuntimeException("Only the owner can update the squad");
         }
         if (name != null) squad.setName(name);
         if (description != null) squad.setDescription(description);
-        if (imageUrl != null) squad.setImageUrl(imageUrl);
+        
+        if (image != null && !image.isEmpty()) {
+            try {
+                String originalFilename = image.getOriginalFilename();
+                String extension = originalFilename != null && originalFilename.contains(".") 
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                    : ".png";
+                String filename = java.util.UUID.randomUUID().toString() + extension;
+                
+                java.nio.file.Path uploadPath = java.nio.file.Paths.get(System.getProperty("user.dir"), "uploads");
+                if (!java.nio.file.Files.exists(uploadPath)) {
+                    java.nio.file.Files.createDirectories(uploadPath);
+                }
+                
+                java.nio.file.Path filePath = uploadPath.resolve(filename);
+                System.out.println("[UPLOAD] Saving image to: " + filePath.toAbsolutePath());
+                image.transferTo(filePath.toFile());
+                
+                squad.setImageUrl("/uploads/" + filename);
+            } catch (Exception e) {
+                System.err.println("[UPLOAD] Failed to save image: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Failed to save image", e);
+            }
+        }
+        
         squad = squadRepository.save(squad);
         return squadToResponse(squad);
     }

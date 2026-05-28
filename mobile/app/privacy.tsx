@@ -33,14 +33,16 @@ export default function PrivacyScreen() {
 
     Alert.alert('Delete Account', 'Are you sure you want to permanently delete your account? All your scores and squads will be removed. This action cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: async () => {
-        try {
-          await deleteAccount();
-          router.replace('/(auth)/login');
-        } catch (e: any) {
-          Alert.alert('Error', e.message);
+      {
+        text: 'Delete', style: 'destructive', onPress: async () => {
+          try {
+            await deleteAccount();
+            router.replace('/(auth)/login');
+          } catch (e: any) {
+            Alert.alert('Error', e.message);
+          }
         }
-      }}
+      }
     ]);
   };
 
@@ -63,33 +65,33 @@ export default function PrivacyScreen() {
                 <View style={[s.settingIcon, { backgroundColor: 'rgba(99, 102, 241, 0.15)' }]}>
                   <Ionicons name="lock-closed" size={20} color={theme.colors.primary} />
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text style={s.settingText}>Private Profile</Text>
                   <Text style={s.settingSub}>Only squad members can see you</Text>
                 </View>
               </View>
-              <Switch 
-                value={privateProfile} 
+              <Switch
+                value={privateProfile}
                 onValueChange={setPrivateProfile}
-                trackColor={{ false: theme.colors.surface, true: theme.colors.primary }}
+                trackColor={{ false: theme.colors.surface, true: theme.colors.success }}
                 thumbColor="#fff"
               />
             </View>
-            
+
             <View style={s.settingDivider} />
-            
+
             <View style={s.settingRow}>
               <View style={s.settingLeft}>
                 <View style={[s.settingIcon, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
                   <Ionicons name="code-working" size={20} color={theme.colors.success} />
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text style={s.settingText}>Commit Privacy</Text>
                   <Text style={s.settingSub}>Hide repository name and commit hash</Text>
                 </View>
               </View>
-              <Switch 
-                value={commitPrivacy} 
+              <Switch
+                value={commitPrivacy}
                 onValueChange={setCommitPrivacy}
                 trackColor={{ false: theme.colors.surface, true: theme.colors.success }}
                 thumbColor="#fff"

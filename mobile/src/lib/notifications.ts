@@ -37,6 +37,10 @@ const getProjectId = () => {
 const requestExpoPushToken = async (): Promise<string | null> => {
   if (Platform.OS === 'web') return null;
 
+  if (Constants.appOwnership === 'expo') {
+    return null;
+  }
+
   try {
     const currentPermission = await Notifications.getPermissionsAsync();
     let finalStatus = currentPermission.status;
