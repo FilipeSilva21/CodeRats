@@ -3,10 +3,26 @@ import { Slot, useRouter, useSegments, useRootNavigationState } from 'expo-route
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useAuthStore } from '../src/features/auth/store/authStore';
+import { useAuthStore, injectStorage, injectConfig, injectNotifications } from '@coderats/shared';
+import * as SecureStore from 'expo-secure-store';
 import { useTheme } from '../src/theme';
 import { useThemeStore } from '../src/theme/themeStore';
 import { notificationsService } from '../src/lib/notifications';
+import { BACKEND_URL, WS_URL } from '../src/config';
+
+injectStorage({
+  getItemAsync: SecureStore.getItemAsync,
+  setItemAsync: SecureStore.setItemAsync,
+  deleteItemAsync: SecureStore.deleteItemAsync,
+});
+injectConfig({
+  backendUrl: BACKEND_URL,
+  wsUrl: WS_URL,
+});
+injectNotifications({
+  clearPushToken: notificationsService.clearPushToken,
+  registerDevice: notificationsService.registerDeviceForPushNotifications,
+});
 
 LogBox.ignoreLogs([
   '"shadow*" style props are deprecated. Use "boxShadow".',

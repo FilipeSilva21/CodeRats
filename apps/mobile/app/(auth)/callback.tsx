@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, useRootNavigationState } from 'expo-router';
 import * as Linking from 'expo-linking';
-import { storage } from '../../src/lib/storage';
-import { useAuthStore } from '../../src/features/auth/store/authStore';
+import { sharedStorage as storage } from '@coderats/shared';
+import {  useAuthStore  } from '@coderats/shared';
 import { theme } from '../../src/theme';
 
 export default function AuthCallbackScreen() {

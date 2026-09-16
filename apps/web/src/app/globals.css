@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* CodeRats Light Theme */
+  --cr-bg: #f8fafc;
+  --cr-surface: #ffffff;
+  --cr-surface-hover: #f1f5f9;
+  --cr-border: #e2e8f0;
+  --cr-text: #0f172a;
+  --cr-text-bold: #000000;
+  --cr-text-muted: #64748b;
+  --cr-text-subtle: #94a3b8;
+  --cr-text-inverse: #ffffff;
+}
+
+:root.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  
+  /* CodeRats Dark Theme */
+  --cr-bg: #0d1117;
+  --cr-surface: #161b22;
+  --cr-surface-hover: #24292e;
+  --cr-border: #30363d;
+  --cr-text: #c9d1d9;
+  --cr-text-bold: #ffffff;
+  --cr-text-muted: #8b949e;
+  --cr-text-subtle: #6e7681;
+  --cr-text-inverse: #000000;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --color-cr-bg: var(--cr-bg);
+  --color-cr-surface: var(--cr-surface);
+  --color-cr-surface-hover: var(--cr-surface-hover);
+  --color-cr-border: var(--cr-border);
+  --color-cr-text: var(--cr-text);
+  --color-cr-text-bold: var(--cr-text-bold);
+  --color-cr-text-muted: var(--cr-text-muted);
+  --color-cr-text-subtle: var(--cr-text-subtle);
+  --color-cr-text-inverse: var(--cr-text-inverse);
+}
+
+body {
+  background: var(--cr-bg);
+  color: var(--cr-text);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
+}

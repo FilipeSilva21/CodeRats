@@ -6,8 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Card } from '../src/components/ui/Card';
-import { useAuthStore } from '../src/features/auth/store/authStore';
-import { useSettingsStore } from '../src/features/settings/store/settingsStore';
+import {  useAuthStore  } from '@coderats/shared';
+import {  useSettingsStore  } from '@coderats/shared';
 
 export default function PrivacyScreen() {
   const router = useRouter();

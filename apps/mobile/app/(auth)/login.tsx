@@ -5,7 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
-import { useAuthStore } from '../../src/features/auth/store/authStore';
+import {  useAuthStore  } from '@coderats/shared';
 import { theme } from '../../src/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { BACKEND_URL } from '../../src/config';

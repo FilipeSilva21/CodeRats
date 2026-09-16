@@ -1,15 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, Image, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme, useStyles } from '../../src/theme';
 import { Card } from '../../src/components/ui/Card';
 import { Button } from '../../src/components/ui/Button';
 import { Avatar } from '../../src/components/ui/Avatar';
-import { useLeaderboardStore } from '../../src/features/leaderboard/store/leaderboardStore';
-import { useAuthStore } from '../../src/features/auth/store/authStore';
+import {  useLeaderboardStore  } from '@coderats/shared';
+import {  useAuthStore  } from '@coderats/shared';
 import { useWebSocket } from '../../src/lib/websocket';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+/**
+ * Calculates the time remaining until the next Monday 00:00 UTC,
+ * which is when the backend processes weekly league promotions/demotions.
+ */
+function getTimeUntilNextMondayUTC(): string {
+  const now = new Date();
+  const dayOfWeek = now.getUTCDay(); // 0 = Sunday, 1 = Monday, ...
+  // Days until next Monday: if today is Monday (1), we want 7 (next Monday, not today)
+  const daysUntil = dayOfWeek === 0 ? 1 : dayOfWeek === 1 ? 7 : 8 - dayOfWeek;
+
+  const nextMonday = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + daysUntil,
+    0, 0, 0, 0
+  ));
+
+  const diffMs = nextMonday.getTime() - now.getTime();
+  if (diffMs <= 0) return 'PROCESSING...';
+
+  const totalMinutes = Math.floor(diffMs / (1000 * 60));
+  const totalHours = Math.floor(totalMinutes / 60);
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `ENDS IN ${days}D ${hours}H`;
+  if (hours > 0) return `ENDS IN ${hours}H ${minutes}M`;
+  return `ENDS IN ${minutes}M`;
+}
 
 export default function LeaderboardScreen() {
   const { users, tiers, isLoading, fetchGlobalLeaderboard, fetchTiers } = useLeaderboardStore();
@@ -18,6 +49,15 @@ export default function LeaderboardScreen() {
   const s = useStyles(styles);
 
   const [showLeagueModal, setShowLeagueModal] = useState(false);
+  const [countdownText, setCountdownText] = useState(() => getTimeUntilNextMondayUTC());
+
+  // Update the countdown every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdownText(getTimeUntilNextMondayUTC());
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     fetchGlobalLeaderboard();
@@ -143,7 +183,7 @@ export default function LeaderboardScreen() {
             </View>
             <View style={s.timerContainer}>
               <Ionicons name="time-outline" size={14} color={theme.colors.textMuted} />
-              <Text style={s.timerText}>ENDS IN 3D 14H</Text>
+              <Text style={s.timerText}>{countdownText}</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -9,6 +9,7 @@ Thumbs.db
 *.swo
 *.sublime-project
 *.sublime-workspace
+*.antigravitycli
 
 # Node / Frontend
 node_modules/

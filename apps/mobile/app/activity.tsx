@@ -5,8 +5,8 @@ import { useTheme, useStyles } from '../src/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useScoringStore } from '../src/features/scoring/store/scoringStore';
-import { useSettingsStore } from '../src/features/settings/store/settingsStore';
+import {  useScoringStore  } from '@coderats/shared';
+import {  useSettingsStore  } from '@coderats/shared';
 
 export default function ActivityScreen() {
   const router = useRouter();

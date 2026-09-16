@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuthStore } from '../../src/features/auth/store/authStore';
-import { useScoringStore } from '../../src/features/scoring/store/scoringStore';
-import { useSettingsStore } from '../../src/features/settings/store/settingsStore';
+import {  useAuthStore  } from '@coderats/shared';
+import {  useScoringStore  } from '@coderats/shared';
+import {  useSettingsStore  } from '@coderats/shared';
 import { Card } from '../../src/components/ui/Card';
 import { Avatar } from '../../src/components/ui/Avatar';
 import { useTheme, useStyles } from '../../src/theme';
