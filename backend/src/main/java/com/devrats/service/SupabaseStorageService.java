@@ -36,7 +36,8 @@ public class SupabaseStorageService {
                     : ".png";
             String filename = UUID.randomUUID().toString() + extension;
 
-            String uploadUrl = supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filename;
+            String cleanUrl = supabaseUrl.endsWith("/") ? supabaseUrl.substring(0, supabaseUrl.length() - 1) : supabaseUrl;
+            String uploadUrl = cleanUrl + "/storage/v1/object/" + bucketName + "/" + filename;
 
             String contentType = file.getContentType() != null ? file.getContentType() : "image/jpeg";
 
@@ -52,7 +53,7 @@ public class SupabaseStorageService {
 
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 // Sucesso! Retorna a URL pública da imagem
-                return supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + filename;
+                return cleanUrl + "/storage/v1/object/public/" + bucketName + "/" + filename;
             } else {
                 System.err.println("[SUPABASE STORAGE] Error uploading image: " + response.body());
                 throw new RuntimeException("Failed to upload image to Supabase: " + response.body());

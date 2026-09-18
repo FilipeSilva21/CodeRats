@@ -116,7 +116,7 @@ public class SquadService {
             } catch (Exception e) {
                 System.err.println("[UPLOAD] Failed to save image: " + e.getMessage());
                 e.printStackTrace();
-                throw new RuntimeException("Failed to save image", e);
+                throw new RuntimeException("Upload failed: " + e.getMessage(), e);
             }
         }
         
