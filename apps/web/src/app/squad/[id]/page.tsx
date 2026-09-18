@@ -22,6 +22,7 @@ export default function SquadDetailsPage() {
   const { user } = useAuthStore();
   const [copied, setCopied] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
   const [editName, setEditName] = useState('');
@@ -69,11 +70,14 @@ export default function SquadDetailsPage() {
   };
 
   const handleSaveEdit = async () => {
+    setIsSaving(true);
     try {
       await updateSquad(id, editName, editDesc, editImgBlob || editImgPreview);
       setEditMode(false);
     } catch (e: any) {
       alert("Failed to update squad: " + e.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -145,7 +149,20 @@ export default function SquadDetailsPage() {
 
             <div className="flex gap-4 pt-4">
               <button onClick={() => setEditMode(false)} className="flex-1 py-3 px-4 bg-cr-bg border border-cr-border rounded-xl font-bold hover:bg-cr-surface transition-colors">Cancel</button>
-              <button onClick={handleSaveEdit} className="flex-1 py-3 px-4 bg-[#58a6ff] text-cr-text-inverse rounded-xl font-bold hover:bg-[#3182ce] transition-colors">Save Changes</button>
+              <button 
+                onClick={handleSaveEdit} 
+                disabled={isSaving}
+                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#58a6ff] text-cr-text-inverse rounded-xl font-bold hover:bg-[#3182ce] cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </button>
             </div>
           </div>
         </div>
