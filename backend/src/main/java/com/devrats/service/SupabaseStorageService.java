@@ -37,6 +37,9 @@ public class SupabaseStorageService {
             String filename = UUID.randomUUID().toString() + extension;
 
             String cleanUrl = supabaseUrl.endsWith("/") ? supabaseUrl.substring(0, supabaseUrl.length() - 1) : supabaseUrl;
+            if (cleanUrl.endsWith("/rest/v1")) {
+                cleanUrl = cleanUrl.substring(0, cleanUrl.length() - 8);
+            }
             String uploadUrl = cleanUrl + "/storage/v1/object/" + bucketName + "/" + filename;
 
             String contentType = file.getContentType() != null ? file.getContentType() : "image/jpeg";

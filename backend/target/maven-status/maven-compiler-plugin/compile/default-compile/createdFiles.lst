@@ -17,6 +17,7 @@ com\devrats\service\GitHubApiClient$GitHubUser.class
 com\devrats\config\WebConfig.class
 com\devrats\model\WebhookPayload$CommitData.class
 com\devrats\model\Notification.class
+com\devrats\service\SupabaseStorageService.class
 com\devrats\controller\SquadController.class
 com\devrats\websocket\ScoreWebSocketHandler.class
 com\devrats\controller\WebhookController.class
