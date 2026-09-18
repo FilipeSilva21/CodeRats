@@ -167,7 +167,7 @@ export default function SquadScreen() {
       <View style={s.c}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24, gap: 12, paddingHorizontal: 24, paddingTop: 16 }}>
-            <TouchableOpacity onPress={() => { setEditMode(false); clearCurrentSquad(); }} style={s.backBtn}>
+            <TouchableOpacity onPress={() => { if (editMode) { setEditMode(false); } else { clearCurrentSquad(); } }} style={s.backBtn}>
               <Ionicons name="arrow-back" size={20} color={theme.colors.text} />
             </TouchableOpacity>
             <Text style={s.title} numberOfLines={1}>{editMode ? 'Edit Squad' : currentSquad.name}</Text>
