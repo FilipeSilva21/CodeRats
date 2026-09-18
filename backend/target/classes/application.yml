@@ -42,3 +42,8 @@ jwt:
   secret: devrats-jwt-secret
   expiration: 3600000 # 1 hour
   refreshExpiration: 604800000 # 7 days
+
+supabase:
+  url: ${SUPABASE_URL:https://avblxxavxqqzafgulvvp.supabase.co}
+  key: ${SUPABASE_KEY:insira-sua-anon-key}
+  bucket: ${SUPABASE_BUCKET:squads}

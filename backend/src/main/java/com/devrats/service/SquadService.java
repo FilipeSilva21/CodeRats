@@ -19,11 +19,13 @@ public class SquadService {
     private final SquadRepository squadRepository;
     private final SquadMemberRepository squadMemberRepository;
     private final UserRepository userRepository;
+    private final SupabaseStorageService supabaseStorageService;
 
-    public SquadService(SquadRepository squadRepository, SquadMemberRepository squadMemberRepository, UserRepository userRepository) {
+    public SquadService(SquadRepository squadRepository, SquadMemberRepository squadMemberRepository, UserRepository userRepository, SupabaseStorageService supabaseStorageService) {
         this.squadRepository = squadRepository;
         this.squadMemberRepository = squadMemberRepository;
         this.userRepository = userRepository;
+        this.supabaseStorageService = supabaseStorageService;
     }
 
     @Transactional
@@ -109,22 +111,8 @@ public class SquadService {
         
         if (image != null && !image.isEmpty()) {
             try {
-                String originalFilename = image.getOriginalFilename();
-                String extension = originalFilename != null && originalFilename.contains(".") 
-                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
-                    : ".png";
-                String filename = java.util.UUID.randomUUID().toString() + extension;
-                
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(System.getProperty("user.dir"), "uploads");
-                if (!java.nio.file.Files.exists(uploadPath)) {
-                    java.nio.file.Files.createDirectories(uploadPath);
-                }
-                
-                java.nio.file.Path filePath = uploadPath.resolve(filename);
-                System.out.println("[UPLOAD] Saving image to: " + filePath.toAbsolutePath());
-                image.transferTo(filePath.toFile());
-                
-                squad.setImageUrl("/uploads/" + filename);
+                String publicUrl = supabaseStorageService.uploadImage(image);
+                squad.setImageUrl(publicUrl);
             } catch (Exception e) {
                 System.err.println("[UPLOAD] Failed to save image: " + e.getMessage());
                 e.printStackTrace();

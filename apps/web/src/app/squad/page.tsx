@@ -1,8 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSquadStore, useAuthStore } from "@coderats/shared";
+import { useSquadStore, useAuthStore, sharedConfig } from "@coderats/shared";
 import Link from "next/link";
+
+const getImageUrl = (url?: string | null) => {
+  if (!url) return undefined;
+  if (url.startsWith('/')) {
+    const base = sharedConfig?.backendUrl || 'http://localhost:8080';
+    return `${base}${url}`;
+  }
+  return url;
+};
 
 export default function SquadPage() {
   const { squads, isLoading, error, fetchMySquads, joinSquad, createSquad } = useSquadStore();
@@ -108,7 +117,7 @@ export default function SquadPage() {
                   <div className="h-24 bg-gradient-to-r from-indigo-900/50 to-cr-surface relative">
                     <div className="absolute -bottom-8 left-6">
                       {squad.imageUrl ? (
-                        <img src={squad.imageUrl} alt={squad.name} className="w-16 h-16 rounded-xl border-4 border-cr-surface bg-cr-bg" />
+                        <img src={getImageUrl(squad.imageUrl)} alt={squad.name} className="w-16 h-16 rounded-xl border-4 border-cr-surface bg-cr-bg object-cover" />
                       ) : (
                         <div className="w-16 h-16 rounded-xl border-4 border-cr-surface bg-cr-bg flex items-center justify-center text-2xl font-black text-cr-text-subtle">
                           {squad.name.charAt(0)}

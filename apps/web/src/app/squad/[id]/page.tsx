@@ -1,8 +1,17 @@
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
-import { useSquadStore, useAuthStore } from '@coderats/shared';
+import { useSquadStore, useAuthStore, sharedConfig } from '@coderats/shared';
 import { useParams, useRouter } from 'next/navigation';
+
+const getImageUrl = (url?: string | null) => {
+  if (!url) return undefined;
+  if (url.startsWith('/')) {
+    const base = sharedConfig?.backendUrl || 'http://localhost:8080';
+    return `${base}${url}`;
+  }
+  return url;
+};
 
 export default function SquadDetailsPage() {
   const params = useParams();
@@ -171,7 +180,7 @@ export default function SquadDetailsPage() {
           <div className="h-32 bg-gradient-to-r from-indigo-900/50 to-cr-surface relative">
             <div className="absolute -bottom-10 left-8">
               {currentSquad.imageUrl ? (
-                <img src={currentSquad.imageUrl} alt={currentSquad.name} className="w-24 h-24 rounded-2xl border-4 border-cr-surface bg-cr-bg object-cover" />
+                <img src={getImageUrl(currentSquad.imageUrl)} alt={currentSquad.name} className="w-24 h-24 rounded-2xl border-4 border-cr-surface bg-cr-bg object-cover" />
               ) : (
                 <div className="w-24 h-24 rounded-2xl border-4 border-cr-surface bg-cr-bg flex items-center justify-center text-4xl font-black text-cr-text-subtle shadow-lg">{currentSquad.name.charAt(0)}</div>
               )}
@@ -223,7 +232,7 @@ export default function SquadDetailsPage() {
                 <div className="flex items-center gap-5">
                   <div className={`w-8 font-black text-center ${index === 0 ? 'text-yellow-500 text-xl' : index === 1 ? 'text-gray-400 text-lg' : index === 2 ? 'text-amber-600 text-lg' : 'text-cr-text-subtle'}`}>#{index + 1}</div>
                   {member.avatarUrl ? (
-                    <img src={member.avatarUrl} alt={member.username} className="w-12 h-12 rounded-full border border-cr-border" />
+                    <img src={getImageUrl(member.avatarUrl)} alt={member.username} className="w-12 h-12 rounded-full border border-cr-border" />
                   ) : (
                     <div className="w-12 h-12 rounded-full bg-cr-bg border border-cr-border flex items-center justify-center font-bold text-cr-text-muted text-lg">{member.displayName.charAt(0)}</div>
                   )}
