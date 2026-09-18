@@ -10,9 +10,9 @@ spring:
       max-file-size: 10MB
       max-request-size: 15MB
   datasource:
-    url: jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:5432/postgres?user=postgres.avblxxavxqqzafgulvvp&password=[YOUR-PASSWORD]
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/devrats}
     username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASSWORD:YOUR-PASSWORD}
+    password: ${DATABASE_PASSWORD:password}
   jpa:
     hibernate:
       ddl-auto: update
