@@ -3,7 +3,7 @@
 import { useAuthStore, sharedConfig } from '@coderats/shared';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Flame, Users, Trophy, ShieldCheck, Github } from 'lucide-react';
+import { Flame, Users, Trophy, ShieldCheck, Code } from 'lucide-react';
 
 export default function LoginPage() {
   const { isLoading, error, isAuthenticated } = useAuthStore();
@@ -79,7 +79,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="flex items-center justify-center w-full gap-3 bg-[#58a6ff] hover:bg-[#4a93e6] active:translate-y-1 active:shadow-none text-white font-black text-lg py-4 px-8 rounded-2xl transition-all disabled:opacity-50 border-b-4 border-[#3182ce] shadow-[0_4px_0_0_#3182ce]"
           >
-            <Github size={24} strokeWidth={3} />
+            <Code size={24} strokeWidth={3} />
             {isLoading ? 'Loading...' : 'Sign in with GitHub'}
           </button>
           <p className="text-sm text-cr-text-muted text-center mt-2 font-bold">
